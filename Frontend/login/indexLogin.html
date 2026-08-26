@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlkyWall - Banca Digital</title>
+    <link rel="stylesheet" href="style viejo.css">
+    <script src="https://kit.fontawesome.com/71dbc4a81d.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <form id="logIn">
+        <!-- Título "AlkyWall" se genera con CSS ::before -->
+
+        <!-- Subtítulo -->
+        <p class="subtitle">BANCA DIGITAL SEGURA</p>
+
+        <!-- Bienvenida -->
+        <h2 class="welcome">Bienvenido de nuevo</h2>
+        <p class="instruction">Ingresá tus credenciales para acceder.</p>
+
+
+        <!-- Campo Email -->
+        <label for="email"><i class="fa-regular fa-envelope"></i> EMAIL</label>
+        <input type="email" id="email" placeholder="Ingrese su correo electrónico" required>
+        <div class="response-container">
+            <p id="responseEmail"></p>
+
+        </div>
+
+        <!-- Campo Contraseña -->
+        <label for="password">
+            <i class="fa-solid fa-lock"></i> CONTRASEÑA
+            <a id="forgetPassword">¿Olvidaste tu clave?</a>
+        </label>
+        <input type="password" id="password" placeholder="••••••••••••••••" required>
+        <div class="response-container">
+            <p id="responsePassword"></p>
+        </div>
+
+        <!-- Recordar dispositivo -->
+        <div class="remember-container">
+            <input type="checkbox" id="remember">
+            <label for="remember">Recordar este dispositivo</label>
+        </div>
+        <!-- Mensaje de respuesta -->
+        <div class="response-container">
+            <p id="responseGeneral"></p>
+        </div>
+
+        <!-- Botón Ingresar -->
+        <button type="submit">Ingresar a mi cuenta</button>
+
+        <!-- Acceso rápido -->
+        <!-- <div class="divider">
+            <span>O ACCESO RÁPIDO CON</span>
+        </div> -->
+
+        <!-- Huella / FaceID -->
+        <!-- <div class="bio-container">
+            <button class="bio-btn">
+                <i class="fa-solid fa-fingerprint"></i> Huella / FaceID
+            </button>
+        </div> -->
+
+        <!-- Registro -->
+        <p class="register">
+            ¿Todavía no tenés cuenta en AlkyWall?<br>
+            <a href="">Abrir tu cuenta gratis</a>
+        </p>
+
+        <!-- Footer seguridad -->
+        <div class="footer-security">
+            <span><i class="fa-solid fa-lock"></i> SSL 256-Bit Encrypted</span>
+            <span>Regulado PSP / CVU</span>
+        </div>
+    </form>
+
+    <script src="src.js"></script>
+</body>
+
+</html>
