@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/71dbc4a81d.js" crossorigin="anonymous"></script>
 </head>
-<body class="bg-slate-50 flex items-center justify-center min-h-screen font-sans">
+<body class="bg-slate-50 flex items-center justify-center min-h-screen font-sans opacity-0">
     <form id="logIn" class="w-full max-w-[380px] bg-gradient-to-b from-[#f0f6ff] to-white rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center my-8">
         
         <!-- Título "AlkyWall" (Logo de Figma) -->
@@ -104,7 +104,7 @@
             <p class="register text-slate-500 text-left leading-relaxed">
                 ¿Todavía no tenés cuenta en<br>AlkyWall?
             </p>
-            <a href="../signIn/indexSignIn.html" class="text-blue-600 font-bold hover:text-blue-700 text-right leading-relaxed">Abrir tu cuenta<br>gratis</a>
+            <a href="../signIn/indexSignIn.html" class="text-blue-600 font-bold hover:text-blue-700 text-right leading-relaxed page-transition">Abrir tu cuenta<br>gratis</a>
         </div>
 
         <!-- Footer seguridad -->
@@ -115,5 +115,6 @@
     </form>
 
     <script src="srcLogin.js"></script>
+    <script src="../fx.js"></script>
 </body>
 </html>
