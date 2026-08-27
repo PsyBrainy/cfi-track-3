@@ -1,4 +1,4 @@
-package com.track3.alkywall.config;
+package com.track3.alkywall.config.security;
 
 import com.track3.alkywall.services.JwtService;
 import com.track3.alkywall.services.JwtUserDetailsService;
