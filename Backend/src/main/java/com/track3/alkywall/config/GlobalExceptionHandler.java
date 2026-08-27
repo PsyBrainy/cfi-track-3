@@ -19,4 +19,15 @@ public class GlobalExceptionHandler {
                 exception.getMessage()
         ));
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<DataApiResponse<Map<String, String>>> methodArgumentNotValidException(MethodArgumentNotValidException e){
+        Map<String, String> errors = new HashMap<>();
+        e.getFieldErrors().forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new DataApiResponse<>(
+                false,
+                "Datos inválidos",
+                errors
+        ));
+    }
 }
