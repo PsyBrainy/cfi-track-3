@@ -1,7 +1,13 @@
-const baseUrl = "http://localhost:8080";
+const axiosInstance = axios.create({
+    baseUrl: "http://localhost:8080/user",
+    timeout: 5000,
+    headers: {
+        "Content-Type": "application/json"
+    },
+});
 const form = document.getElementById('logIn');
 form.onsubmit = (data) => logIn(data);
-class userRequest {
+class UserRequest {
     constructor(email, password) {
         this.email = email;
         this.password = password;
@@ -20,12 +26,13 @@ function logIn(data) {
             console.log('password Valido')
             ocultarMensaje(document.getElementById('responsePassword'))
             // Si los campos son válidos hago la petición http
-            userResponse = findUser(email, password);
+            const userRequest = new UserRequest(email, password);
+            userResponse = findUser(userRequest);
             console.log(userResponse);
             if (userResponse && userResponse.token !== '') {
-                saveData(response);
+                saveData(userResponse);
                 mostrarMensaje("Inicio de sesión exitoso", document.getElementById('responseGeneral'));
-                window.location.href = "../dashboard/indexDashboard.html";
+                // window.location.href = "../dashboard/indexDashboard.html";
             } else {
                 mostrarMensaje("No se pudo iniciar sesión", document.getElementById('responseGeneral'));
             }
@@ -35,43 +42,37 @@ function logIn(data) {
         mostrarMensaje("Intente ingresando una dirección de email válida", document.getElementById('responseEmail'));
     }
 }
-function findUser(email, password) {
-    const userR = new userRequest(email, password);
-    response = fetch(baseUrl.concat("/login"), {
-        body: JSON.stringify(userR),
-        headers: {
-            "Content-Type": "application/json"
-        },
-        method: "POST"
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json()
-            } else throw new Error("Error al logear al usuario")
-        }).catch(error => {
-            console.error("Ocurrió un error al logear al usuario");
-            console.error(error);
-            mostrarMensaje("Ocurrió un error", document.getElementById('generalResponse'));
-        }
-        );
-    return response;
+const findUser = async (userRequest) => {
+    try {
+        const userResponse = await axiosInstance
+            .post("/login", {
+                body: JSON.stringify(userRequest)
+            });
+        return userResponse;
+    }
+    catch (error) {
+        console.error(error);
+        mostrarMensaje('Ocurrió un error al iniciar sesión', document.getElementById('responseGeneral'))
+    }
+    finally {
+        console.log("Request completed");
+    };
 }
-function getUserByToken(token) {
-    fetch(baseUrl.concat("/getById"), {
-        body: JSON.stringify(token),
-        headers: {
-            "Content-Type": "application/json"
-        },
-        method: "POST"
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json()
-            } else throw new Error("Ocurrió un error al buscar al usuario")
-        }).catch(error => {
-            console.error(error);
-        }
-        );
+const getUserByToken = async (token) => {
+    try {
+        const userResponse = await axiosInstance
+            .post("/getByToken", {
+                body: JSON.stringify(token)
+            });
+        return userResponse;
+    }
+    catch (error) {
+        console.error(error);
+        mostrarMensaje('Ocurrió un error al buscar al usuario', document.getElementById('responseGeneral'))
+    }
+    finally {
+        console.log("Request completed");
+    };
 }
 function saveData(response) {
     // Guarda token en localStorage para mantener sesión.
@@ -95,11 +96,11 @@ function ocultarMensaje(elemento) {
     elemento.textContent = '';
     elemento.style.display = "none";
 }
-function seePassword(){
+function seePassword() {
     const password = document.getElementById('password');
-    if(password.type === "password"){
+    if (password.type === "password") {
         password.type = "text";
-    }else if(password.type === "text"){
+    } else if (password.type === "text") {
         password.type = "password";
     }
 }

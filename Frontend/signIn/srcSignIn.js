@@ -1,4 +1,10 @@
-const baseUrl = "http://localhost:8080";
+const axiosInstance = axios.create({
+    baseUrl: "http://localhost:8080/user",
+    timeout: 5000,
+    headers: {
+        "Content-Type": "application/json"
+    },
+});
 const form = document.getElementById('signIn');
 form.onsubmit = (data) => signIn(data);
 class UserRequest {
@@ -35,7 +41,8 @@ function signIn(data) {
     if (validateInputs(userRequest)) {
         const userResponse = createUser(userRequest);
         if (userResponse !== '') {
-            window.location.href = "../login/indexLogin.html";
+            // window.location.href = "../login/indexLogin.html";
+            console.log(userResponse);
         } else {
             mostrarMensaje('Ocurrió un error al crear tu cuenta', document.getElementById('responseGeneral'))
         }
@@ -86,23 +93,21 @@ function validateInputs(userData) {
     //Retorna si todos los campos son válidos
     return ok;
 }
-function createUser(userData) {
-    response = fetch(baseUrl.concat("/signIn"), {
-        body: JSON.stringify(userData),
-        headers: {
-            "Content-Type": "application/json"
-        },
-        method: "POST"
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json()
-            } else throw new Error("Error al crear al usuario")
-        }).catch(error => {
-            console.error("Ocurrió un error al crear al usuario");
-            console.error(error);
-        }
-        );
+const createUser = async (userData) => {
+    try {
+        const userResponse = await axiosInstance
+            .post("/create", {
+                body: JSON.stringify(userData)
+            });
+        return userResponse;
+    }
+    catch (error) {
+        console.error(error);
+        mostrarMensaje('Ocurrió un error al crear al usuario', document.getElementById('responseGeneral'))
+    }
+    finally {
+        console.log("Request completed");
+    };
 }
 function mostrarMensaje(texto, elemento) {
     elemento.textContent = texto;
