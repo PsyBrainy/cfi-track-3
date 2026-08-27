@@ -1,35 +1,94 @@
-const form = document.getElementById('signIn');
 const baseUrl = "http://localhost:8080";
+const form = document.getElementById('signIn');
 form.onsubmit = (data) => signIn(data);
+class UserRequest {
+    constructor(
+        name,
+        lastName,
+        DNI,
+        email,
+        password,
+        passwordRepeat,
+        agree
+    ) {
+        this.name = name,
+            this.lastName = lastName,
+            this.DNI = DNI,
+            this.email = email,
+            this.password = password,
+            this.passwordRepeat = passwordRepeat
+        this.agree = agree;
+    }
+}
 
 function signIn(data) {
     data.preventDefault();
-    console.log("Intentando crear usuario")
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    if (isValidEmail(email)) {
-        ocultarMensaje(document.getElementById('responseEmail'));
-        if (isValidPassword(password)) {
-            ocultarMensaje(document.getElementById('responsePassword'))
-            // Si los campos son válidos hago la petición http
-            userResponse = findUser(email, password);
-            if (userResponse && userRequest.token !== '') {
-                saveData(response);
-                mostrarMensaje("Inicio de sesión exitoso", document.getElementById('responseGeneral'));
-                // ir a la pagina principal de la app
-            } else {
-                mostrarMensaje("No se pudo iniciar sesión", document.getElementById('responseGeneral'));
-            }
-        } else mostrarMensaje("Intente ingresando una contraseña de más de 8 caracteres", document.getElementById('responsePassword'));
+    const userRequest = new UserRequest(document.getElementById('name').value,
+        document.getElementById('lastName').value,
+        document.getElementById('DNI').value,
+        document.getElementById('email').value,
+        document.getElementById('password').value,
+        document.getElementById('passwordRepeat').value,
+        document.getElementById('agree').checked
+    );
+    // así con los otros campos
+    if (validateInputs(userRequest)) {
+        const userResponse = createUser(userRequest);
+        if (userResponse !== '') {
+            window.location.href = "../login/indexLogin.html";
+        } else {
+            mostrarMensaje('Ocurrió un error al crear tu cuenta', document.getElementById('responseGeneral'))
+        }
+    };
+}
+function validateInputs(userData) {
+    ok = true;
+    if (userData.name === '' || userData.name.length < 2) {
+        mostrarMensaje('El nombre no es válido', document.getElementById('responseName'));
+        ok = false;
+    } else ocultarMensaje(document.getElementById('responseName'))
+    if (userData.lastName === '' || userData.lastName.length < 2) {
+        mostrarMensaje('El apellido no es válido', document.getElementById('responseLastName'));
+        ok = false;
+    } else ocultarMensaje(document.getElementById('responseLastName'))
+    userData.DNI = userData.DNI.replaceAll('.', '');
+    userData.DNI = userData.DNI.replaceAll(' ', '');
+    const regexDNI = /^[0-9. ]+$/;
+    if (!regexDNI.test(userData.DNI)) {
+        mostrarMensaje('El DNI solo puede contener números', document.getElementById('responseDNI'));
+        ok = false;
+    } else if (userData.DNI === '' || userData.DNI.length > 9 || userData.DNI.length < 7) {
+        mostrarMensaje('El DNI no puede estar vacío y debe tener como mínimo 7 números y como máximo 9', document.getElementById('responseDNI'));
+        ok = false;
+    } else ocultarMensaje(document.getElementById('responseDNI'))
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regexEmail.test(userData.email) && userData.email !== '') {
+        mostrarMensaje('Debe ingresar un email válido', document.getElementById('responseEmail'));
+        ok = false;
+    } else ocultarMensaje(document.getElementById('responseEmail'))
+    let regexPassword = /^(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
+    if (!regexPassword.test(userData.password)) {
+        mostrarMensaje('La contraseña debe tener como mínimo 8 caracteres y contener al menos un número y un caracter especial', document.getElementById('responsePassword'));
+        ok = false;
     } else {
-        console.log("Contraseña invalida")
-        mostrarMensaje("Intente ingresando una dirección de email válida", document.getElementById('responseEmail'));
+        ocultarMensaje(document.getElementById('responsePassword'));
+        if (userData.password !== userData.passwordRepeat) {
+            mostrarMensaje('Las contraseñas deben ser iguales', document.getElementById('responsePasswordRepeat'));
+            ok = false;
+        } else {
+            ocultarMensaje(document.getElementById('responsePasswordRepeat'));
+        }
     }
+    if (!userData.agree) {
+        mostrarMensaje('Para poder crear una cuenta debes estar de acuerdo con nuestro términos de privacidad y de servicio', document.getElementById('responseAgree'))
+        ok = false;
+    }
+    //Retorna si todos los campos son válidos
+    return ok;
 }
-function findUser(email, password) {
-    const userR = new userRequest(email, password);
-    response = fetch(baseUrl.concat("/login"), {
-        body: JSON.stringify(userR),
+function createUser(userData) {
+    response = fetch(baseUrl.concat("/signIn"), {
+        body: JSON.stringify(userData),
         headers: {
             "Content-Type": "application/json"
         },
@@ -38,51 +97,34 @@ function findUser(email, password) {
         .then(response => {
             if (response.ok) {
                 return response.json()
-            } else throw new Error("Error al logear al usuario")
+            } else throw new Error("Error al crear al usuario")
         }).catch(error => {
-            console.error("Ocurrió un error al logear al usuario");
-            console.error(error);
-            mostrarMensaje("Ocurrió un error", document.getElementById('generalResponse'));
-        }
-        );
-    return response;
-}
-function getUserByToken(token) {
-    fetch(baseUrl.concat("/getById"),{ 
-        body: JSON.stringify(token),
-        headers: {
-            "Content-Type": "application/json"
-        },
-        method: "POST"
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json()
-            } else throw new Error("Ocurrió un error al buscar al usuario")
-        }).catch(error => {
+            console.error("Ocurrió un error al crear al usuario");
             console.error(error);
         }
         );
-}
-function saveData(response) {
-    // Guarda token en localStorage para mantener sesión.
-    localStorage.setItem('token', response.token);
-
-    // Guarda datos del usuario para usarlos en la app.
-    localStorage.setItem('user', JSON.stringify(response.user));
-}
-function isValidPassword(password) {
-    return (password !== "" && password.length > 8);
-}
-function isValidEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return (email !== '') && regex.test(email);
 }
 function mostrarMensaje(texto, elemento) {
     elemento.textContent = texto;
-    elemento.style.display = "blocks"
+    elemento.style.display = "block"
 }
-function ocultarMensaje(elemento){
+function ocultarMensaje(elemento) {
     elemento.textContent = '';
     elemento.style.display = "none";
+}
+function seePassword(data) {
+    const password = document.getElementById('password');
+    if (password.type === "password") {
+        password.type = "text";
+    } else if (password.type === "text") {
+        password.type = "password";
+    }
+}
+function seePasswordRepeat() {
+    const password = document.getElementById('passwordRepeat');
+    if (password.type === "password") {
+        password.type = "text";
+    } else if (password.type === "text") {
+        password.type = "password";
+    }
 }

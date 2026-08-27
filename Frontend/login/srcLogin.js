@@ -1,5 +1,5 @@
-const form = document.getElementById('logIn');
 const baseUrl = "http://localhost:8080";
+const form = document.getElementById('logIn');
 form.onsubmit = (data) => logIn(data);
 class userRequest {
     constructor(email, password) {
@@ -15,14 +15,17 @@ function logIn(data) {
     const password = document.getElementById('password').value;
     if (isValidEmail(email)) {
         ocultarMensaje(document.getElementById('responseEmail'));
+        console.log('email Valido')
         if (isValidPassword(password)) {
+            console.log('password Valido')
             ocultarMensaje(document.getElementById('responsePassword'))
             // Si los campos son válidos hago la petición http
             userResponse = findUser(email, password);
-            if (userResponse && userRequest.token !== '') {
+            console.log(userResponse);
+            if (userResponse && userResponse.token !== '') {
                 saveData(response);
                 mostrarMensaje("Inicio de sesión exitoso", document.getElementById('responseGeneral'));
-                // ir a la pagina principal de la app
+                window.location.href = "../dashboard/indexDashboard.html";
             } else {
                 mostrarMensaje("No se pudo iniciar sesión", document.getElementById('responseGeneral'));
             }
@@ -54,7 +57,7 @@ function findUser(email, password) {
     return response;
 }
 function getUserByToken(token) {
-    fetch(baseUrl.concat("/getById"),{ 
+    fetch(baseUrl.concat("/getById"), {
         body: JSON.stringify(token),
         headers: {
             "Content-Type": "application/json"
@@ -86,9 +89,17 @@ function isValidEmail(email) {
 }
 function mostrarMensaje(texto, elemento) {
     elemento.textContent = texto;
-    elemento.style.display = "blocks"
+    elemento.style.display = "block"
 }
-function ocultarMensaje(elemento){
+function ocultarMensaje(elemento) {
     elemento.textContent = '';
     elemento.style.display = "none";
+}
+function seePassword(){
+    const password = document.getElementById('password');
+    if(password.type === "password"){
+        password.type = "text";
+    }else if(password.type === "text"){
+        password.type = "password";
+    }
 }
