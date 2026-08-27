@@ -1,5 +1,6 @@
 package com.track3.alkywall.config;
 
+import com.track3.alkywall.config.exceptions.LoginFailedException;
 import com.track3.alkywall.config.exceptions.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<DataApiResponse<Map<String, String>>> methodArgumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<DataApiResponse<Map<String, String>>> methodArgumentNotValidException(MethodArgumentNotValidException exception){
         Map<String, String> errors = new HashMap<>();
-        e.getFieldErrors().forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
+
+        exception.getFieldErrors().forEach(err -> errors.put(
+                err.getField(), err.getDefaultMessage()
+        ));
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new DataApiResponse<>(
                 false,
                 "Datos inválidos",
                 errors
+        ));
+    }
+
+    @ExceptionHandler(LoginFailedException.class)
+    public ResponseEntity<ApiResponse> loginFailedException(LoginFailedException exception){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(
+           false,
+           exception.getMessage()
         ));
     }
 }
