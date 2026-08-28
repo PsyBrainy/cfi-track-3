@@ -22,7 +22,7 @@ public class UserService {
 
     @Transactional
     public void createUser(String firstName, String lastName, String email, String password, String dni){
-        if(userRepository.existsByEmailOrDni(email, dni)) throw new UserAlreadyExistsException();
+        if(userRepository.existsByEmailOrDni(email, dni)) throw new UserAlreadyExistsException("El usuario ya existe");
 
         userRepository.save(new User(
                 firstName,
