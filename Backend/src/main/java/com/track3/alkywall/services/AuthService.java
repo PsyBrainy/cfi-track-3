@@ -5,6 +5,7 @@ import com.track3.alkywall.config.exceptions.UserAlreadyExistsException;
 import com.track3.alkywall.models.User;
 import com.track3.alkywall.repositories.RoleRepository;
 import com.track3.alkywall.repositories.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

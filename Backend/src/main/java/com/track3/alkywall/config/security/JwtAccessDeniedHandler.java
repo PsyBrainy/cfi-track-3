@@ -12,6 +12,9 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+/*
+* Clase para responder a errores 403, es decir, cuando no se tienen permisos suficientes
+*  */
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     private final ObjectMapper objectMapper;

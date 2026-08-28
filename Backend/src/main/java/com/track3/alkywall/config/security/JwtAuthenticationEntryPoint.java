@@ -12,6 +12,9 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+/*
+ * Clase para responder a errores de autenticación (401)
+ *  */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
