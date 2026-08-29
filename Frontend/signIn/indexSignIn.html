@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlkyWall - Banca Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/71dbc4a81d.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-slate-50 flex items-center justify-center min-h-screen font-sans opacity-0">
+    <form id="signIn"
+        class="w-full max-w-[380px] bg-gradient-to-b from-[#f0f6ff] to-white rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center my-8">
+
+        <!-- Título "AlkyWall" (Logo de Figma) -->
+        <div class="inline-flex justify-center items-start gap-3 mb-6 mt-2">
+            <div
+                class="size-11 p-0.5 relative bg-gradient-to-br from-blue-600 to-blue-400 rounded-2xl flex justify-center items-center">
+                <div
+                    class="size-11 left-0 top-0 absolute bg-white/0 rounded-2xl shadow-[0px_10px_20px_-8px_rgba(37,99,235,0.35)]">
+                </div>
+                <div class="flex-1 self-stretch bg-white rounded-2xl flex justify-center items-center">
+                    <div class="size-6 relative overflow-hidden">
+                        <div
+                            class="w-3.5 h-4 left-[6px] top-[3px] absolute outline outline-2 outline-offset-[-0.90px] outline-blue-600">
+                        </div>
+                        <div
+                            class="w-1.5 h-2.5 left-[9px] top-[11.50px] absolute outline outline-2 outline-offset-[-0.90px] outline-blue-600">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="inline-flex flex-col justify-start items-start">
+                <div class="self-stretch flex flex-col justify-start items-start">
+                    <div class="justify-center"><span
+                            class="text-slate-900 text-xl font-extrabold font-['Plus_Jakarta_Sans',sans-serif]">Alky</span><span
+                            class="text-blue-600 text-xl font-extrabold font-['Plus_Jakarta_Sans',sans-serif]">Wall</span>
+                    </div>
+                </div>
+                <div class="self-stretch flex flex-col justify-start items-start">
+                    <div
+                        class="justify-center text-blue-600/75 text-[10px] font-bold font-['Plus_Jakarta_Sans',sans-serif] uppercase tracking-wide">
+                        Banca Digital Segura</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bienvenida -->
+        <h2 class="welcome text-2xl font-extrabold text-slate-900 mb-1">Bienvenido de nuevo</h2>
+        <p class="instruction text-xs text-slate-500 mb-6">Ingresá tus credenciales para acceder.</p>
+        <!-- Nombre y apellido -->
+        <div class="w-full mb-4">
+            <label for="firstName"
+                class="block text-[10px] font-bold text-slate-600 mb-1.5 uppercase tracking-wider">NOMBRE</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <i class="fa-regular fa-user text-slate-400 text-sm"></i>
+                </div>
+                <input type="text" id="firstName"
+                    class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder:text-slate-400 placeholder:font-light"
+                    placeholder="Juan" required>
+            </div>
+            <div class="response-container mt-1">
+                <p id="responseName" class="text-red-500 text-xs font-medium"></p>
+            </div>
+            <label for="lastName"
+                class="block text-[10px] font-bold text-slate-600 mb-1.5 uppercase tracking-wider">APELLIDO</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <i class="fa-regular fa-user text-slate-400 text-sm"></i>
+                </div>
+                <input type="text" id="lastName"
+                    class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder:text-slate-400 placeholder:font-light"
+                    placeholder="García" required>
+            </div>
+            <div class="response-container mt-1">
+                <p id="responseLastName" class="text-red-500 text-xs font-medium"></p>
+            </div>
+        </div>
+
+        <!-- Campo DNI -->
+        <div class="w-full mb-4">
+            <label for="dni" class="block text-[10px] font-bold text-slate-600 mb-1.5 uppercase tracking-wider">DNI /
+                Documento</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <i class="fa-regular fa-id-card text-slate-400 text-sm"></i>
+                </div>
+                <input type="text" id="dni"
+                    class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder:text-slate-400 placeholder:font-light"
+                    placeholder="EJ: 38459123" required>
+            </div>
+            <div class="response-container mt-1">
+                <p id="responseDNI" class="text-red-500 text-xs font-medium"></p>
+            </div>
+        </div>
+
+        <!-- Campo Email -->
+        <div class="w-full mb-4">
+            <label for="email"
+                class="block text-[10px] font-bold text-slate-600 mb-1.5 uppercase tracking-wider">EMAIL</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <i class="fa-regular fa-envelope text-slate-400 text-sm"></i>
+                </div>
+                <input type="email" id="email"
+                    class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder:text-slate-400 placeholder:font-light"
+                    placeholder="Ingrese su correo electrónico" required>
+            </div>
+            <div class="response-container mt-1">
+                <p id="responseEmail" class="text-red-500 text-xs font-medium"></p>
+            </div>
+        </div>
+        <!-- Campo Contraseña -->
+        <div class="w-full mb-5">
+            <div class="flex justify-between items-center mb-1.5">
+                <label for="password"
+                    class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider">CONTRASEÑA</label>
+            </div>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-lock text-slate-400 text-sm"></i>
+                </div>
+                <input type="password" id="password"
+                    class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder:text-slate-400 placeholder:font-light"
+                    placeholder="••••••••••••" required>
+                <div
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center cursor-pointer text-slate-400 hover:text-slate-600">
+                    <i class="fa-regular fa-eye" onclick="seePassword()"></i>
+                </div>
+            </div>
+            <div class="response-container mt-1">
+                <p id="responsePassword" class="text-red-500 text-xs font-medium"></p>
+            </div>
+        </div>
+        <!-- Repetir contraseña -->
+        <div class="w-full mb-5">
+            <div class="flex justify-between items-center mb-1.5">
+                <label for="passwordRepeat"
+                    class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider">INGRESE DE NUEVO SU
+                    CONTRASEÑA</label>
+            </div>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-lock text-slate-400 text-sm"></i>
+                </div>
+                <input type="password" id="passwordRepeat"
+                    class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors placeholder:text-slate-400 placeholder:font-light"
+                    placeholder="••••••••••••" required>
+                <div
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center cursor-pointer text-slate-400 hover:text-slate-600">
+                    <i class="fa-regular fa-eye" onclick="seePasswordRepeat()"></i>
+                </div>
+            </div>
+            <div class="response-container mt-1">
+                <p id="responsePasswordRepeat" class="text-red-500 text-xs font-medium"></p>
+            </div>
+        </div>
+
+        <!-- Mensaje de respuesta -->
+        <div class="w-full response-container mb-3 text-center">
+            <p id="responseGeneral" class="text-red-500 text-xs font-medium"></p>
+        </div>
+
+        <div class="w-full flex items-center mb-6">
+            <input type="checkbox" id="agree"
+                class="w-3.5 h-3.5 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500 focus:ring-1">
+            <label for="agree" class="ml-2 text-xs font-medium text-slate-500">Acepto los <a
+                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Términos del Servicio</a> y la <a
+                    href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Política de Privacidad</a> de AlkyWall</label>
+        </div>
+        <div class="w-full response-container mb-3 text-center">
+            <p id="responseAgree" class="text-red-500 text-xs font-medium"></p>
+        </div>
+
+        <!-- Botón Ingresar -->
+        <button type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-3 px-4 rounded-xl flex justify-center items-center gap-2 transition-colors shadow-[0_4px_14px_0_rgba(37,99,235,0.39)]">
+            Crear cuenta <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <!-- LogIn -->
+        <div class="w-full flex justify-between items-center text-xs mb-8">
+            <p class="register text-slate-500 text-left leading-relaxed">
+                ¿Ya tenés una cuenta en<br>AlkyWall?
+            </p>
+            <a href="../login/indexLogin.html"
+                class="text-blue-600 font-bold hover:text-blue-700 text-right leading-relaxed page-transition">Ingresá a tu
+                cuenta</a>
+        </div>
+
+        <!-- Footer seguridad -->
+        <div
+            class="footer-security w-full flex justify-center items-center gap-5 text-[9px] text-slate-400 font-medium border-t border-slate-100 pt-6">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-blue-500"></i> SSL 256-Bit
+                Encrypted</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-cyan-400"></i> Regulado PSP
+                / CVU</span>
+        </div>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="srcSignIn.js"></script>
+    <script src="../fx.js"></script>
+</body>
+
+</html>
