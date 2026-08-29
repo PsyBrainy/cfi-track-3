@@ -1,4 +1,5 @@
 HELP.md
+tutorial-git.md
 target/
 Backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
