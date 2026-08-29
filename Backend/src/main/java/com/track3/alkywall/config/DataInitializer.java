@@ -1,5 +1,6 @@
 package com.track3.alkywall.config;
 
+import com.track3.alkywall.config.exceptions.NotFoundException;
 import com.track3.alkywall.models.Role;
 import com.track3.alkywall.models.User;
 import com.track3.alkywall.repositories.RoleRepository;
@@ -10,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DataInitializer {
-
     @Bean
     public CommandLineRunner initRolesAndCategories(RoleRepository roleRepository, UserRepository userRepository) {
         return args -> {
@@ -19,14 +19,15 @@ public class DataInitializer {
                 roleRepository.save(new Role("USER"));
             }
 
-            if(userRepository.count() == 0){
+            // Creación de usuario admin
+            if(userRepository.findByEmail("admin@alkywall.com").isEmpty()){
                 userRepository.save(new User(
-                        "nombre",
-                        "apellido",
-                        "email@gmail.com",
-                        "password",
-                        "1",
-                        roleRepository.findByName("USER")
+                        "admin",
+                        "",
+                        "admin@alkywall.com",
+                        "adminpassword",
+                        "",
+                        roleRepository.findByName("ADMIN").get()
                 ));
             }
         };
