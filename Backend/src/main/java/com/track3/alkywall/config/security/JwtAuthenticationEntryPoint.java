@@ -1,5 +1,6 @@
-package com.track3.alkywall.config;
+package com.track3.alkywall.config.security;
 
+import com.track3.alkywall.config.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +12,9 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+/*
+ * Clase para responder a errores de autenticación (401)
+ *  */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;

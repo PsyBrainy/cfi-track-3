@@ -1,4 +1,4 @@
-package com.track3.alkywall.config;
+package com.track3.alkywall.config.security;
 
 import com.track3.alkywall.services.JwtService;
 import com.track3.alkywall.services.JwtUserDetailsService;
@@ -30,17 +30,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // Se verifica que exista un header como Authorization: Bearer ...
         String authorizationHeader = request.getHeader("Authorization");
-
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;
         }
 
-        String jwt = authorizationHeader.substring(7);
+        String jwt = authorizationHeader.substring(7); // Se extrae el token
         try {
             String email = jwtService.getEmailFromToken(jwt);
 
+            // Se crea un securityContext con el cual Spring usa para saber si hay un usuario autenticado
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
             UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(email);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
