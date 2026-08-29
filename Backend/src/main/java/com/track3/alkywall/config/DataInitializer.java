@@ -5,14 +5,16 @@ import com.track3.alkywall.models.Role;
 import com.track3.alkywall.models.User;
 import com.track3.alkywall.repositories.RoleRepository;
 import com.track3.alkywall.repositories.UserRepository;
+import com.track3.alkywall.services.AuthService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataInitializer {
     @Bean
-    public CommandLineRunner initRolesAndCategories(RoleRepository roleRepository, UserRepository userRepository) {
+    public CommandLineRunner initRolesAndCategories(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             if(roleRepository.count() == 0){
                 roleRepository.save(new Role("ADMIN"));
@@ -25,7 +27,7 @@ public class DataInitializer {
                         "admin",
                         "",
                         "admin@alkywall.com",
-                        "adminpassword",
+                        passwordEncoder.encode("adminpassword"),
                         "",
                         roleRepository.findByName("ADMIN").get()
                 ));
