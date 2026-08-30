@@ -18,3 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Solución para el problema de la "pantalla en blanco" al usar el botón Volver
+// Los navegadores guardan el estado exacto de la página al salir (que era opacity-0).
+// Este evento se dispara siempre, incluso cuando volvemos usando la caché del navegador.
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        document.body.classList.remove('opacity-0');
+    }
+});
