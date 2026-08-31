@@ -54,9 +54,4 @@ public class AuthController {
                 Map.of("token", jwtService.createToken(email))
         );
     }
-
-    @GetMapping("/user")
-    public ResponseEntity<Void> userAuth(){
-        return ResponseEntity.ok().build();
-    }
 }

@@ -1,6 +1,6 @@
 package com.track3.alkywall.services;
 
-import com.track3.alkywall.config.exceptions.UserNotFoundException;
+import com.track3.alkywall.config.exceptions.NotFoundException;
 import com.track3.alkywall.models.User;
 import com.track3.alkywall.repositories.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +20,10 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("El usuario con email "+email+" no fue encontrado"));
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundException("El usuario no existe")
+        );
+
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),

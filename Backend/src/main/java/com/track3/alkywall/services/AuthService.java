@@ -1,11 +1,11 @@
 package com.track3.alkywall.services;
 
 import com.track3.alkywall.config.exceptions.LoginFailedException;
-import com.track3.alkywall.config.exceptions.UserAlreadyExistsException;
+import com.track3.alkywall.config.exceptions.NotFoundException;
+import com.track3.alkywall.config.exceptions.AlreadyExistsException;
 import com.track3.alkywall.models.User;
 import com.track3.alkywall.repositories.RoleRepository;
 import com.track3.alkywall.repositories.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class AuthService {
 
     @Transactional
     public void registerUser(String firstName, String lastName, String email, String password, String dni){
-        if(userRepository.existsByEmailOrDni(email, dni)) throw new UserAlreadyExistsException("El usuario ya existe");
+        if(userRepository.existsByEmailOrDni(email, dni)) throw new AlreadyExistsException("El usuario ya existe");
 
         userRepository.save(new User(
                 firstName,
@@ -34,7 +34,7 @@ public class AuthService {
                 email,
                 passwordEncoder.encode(password),
                 dni,
-                roleRepository.findByName("USER")
+                roleRepository.findByName("USER").orElseThrow(() -> new NotFoundException("El rol no existe"))
         ));
     }
 
@@ -42,7 +42,7 @@ public class AuthService {
         Optional<String> password = userRepository.findPasswordByEmail(email);
 
         if(password.isEmpty() || !passwordEncoder.matches(loginPassword, password.get())){
-            throw new LoginFailedException("Email o contraseña incorrecta");
+            throw new LoginFailedException("Email o contraseña incorrectos");
         };
     }
 }
