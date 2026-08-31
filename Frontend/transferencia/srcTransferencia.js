@@ -1,0 +1,287 @@
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Referencias al DOM (Pasos) ---
+    const paso1 = document.getElementById('paso1');
+    const paso2 = document.getElementById('paso2');
+    const paso3 = document.getElementById('paso3');
+    const btnVolver = document.getElementById('btnVolver');
+    
+    // --- Referencias Paso 1 ---
+    const inputDestinatario = document.getElementById('inputDestinatario');
+    const btnBuscar = document.getElementById('btnBuscar');
+    const botonesContactos = document.querySelectorAll('.btn-contacto');
+
+    // --- Referencias Paso 2 ---
+    const avatarDestinatario = document.getElementById('avatarDestinatario');
+    const nombreDestinatario = document.getElementById('nombreDestinatario');
+    const btnCambiarDestino = document.getElementById('btnCambiarDestino');
+    const inputMonto = document.getElementById('inputMonto');
+    const btnContinuarMonto = document.getElementById('btnContinuarMonto');
+
+    // --- Referencias Paso 3 ---
+    const resumenMonto = document.getElementById('resumenMonto');
+    const resumenNombre = document.getElementById('resumenNombre');
+    const resumenAlias = document.getElementById('resumenAlias');
+    const contenedorGuardarContacto = document.getElementById('contenedorGuardarContacto');
+    const boxInputNombre = document.getElementById('boxInputNombre');
+    const nombreAgendado = document.getElementById('nombreAgendado');
+    const btnTransferir = document.getElementById('btnTransferir');
+    
+    // Toggle de Guardar
+    const toggleGuardar = document.getElementById('toggleGuardar');
+    const toggleBolaGuardar = document.getElementById('toggleBolaGuardar');
+
+    // --- Variables de Estado ---
+    let currentStep = 1;
+    let destinatarioActual = { nombre: '', alias: '', esNuevo: false };
+    let montoActual = 0;
+    let guardarContacto = true;
+
+    const paso4 = document.getElementById('paso4');
+    const paso5 = document.getElementById('paso5');
+    const btnReintentar = document.getElementById('btnReintentar');
+
+    // ==========================================
+    // INICIALIZACIÓN (Parámetros por URL)
+    // ==========================================
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramAlias = urlParams.get('alias');
+    const paramNombre = urlParams.get('nombre');
+
+    // ==========================================
+    // NAVEGACIÓN Y TRANSICIONES
+    // ==========================================
+    const mostrarPaso = (paso) => {
+        paso1.classList.add('hidden');
+        paso2.classList.add('hidden');
+        paso3.classList.add('hidden');
+        if (paso4) paso4.classList.add('hidden');
+        if (paso5) paso5.classList.add('hidden');
+        
+        paso1.classList.remove('fade-in');
+        paso2.classList.remove('fade-in');
+        paso3.classList.remove('fade-in');
+        if (paso4) paso4.classList.remove('fade-in');
+        if (paso5) paso5.classList.remove('fade-in');
+        
+        void paso1.offsetWidth; 
+
+        if (paso === 1) {
+            paso1.classList.remove('hidden');
+            paso1.classList.add('fade-in');
+            document.getElementById('tituloHeader').innerText = 'Transferir';
+        } else if (paso === 2) {
+            paso2.classList.remove('hidden');
+            paso2.classList.add('fade-in');
+            document.getElementById('tituloHeader').innerText = 'Monto';
+            if (inputMonto) inputMonto.focus();
+        } else if (paso === 3) {
+            prepararResumen();
+            paso3.classList.remove('hidden');
+            paso3.classList.add('fade-in');
+            document.getElementById('tituloHeader').innerText = 'Confirmar';
+        } else if (paso === 4) {
+            if (paso4) {
+                paso4.classList.remove('hidden');
+                paso4.classList.add('flex', 'fade-in');
+            }
+        } else if (paso === 5) {
+            if (paso5) {
+                paso5.classList.remove('hidden');
+                paso5.classList.add('flex', 'fade-in');
+            }
+        }
+        currentStep = paso;
+    };
+
+    btnVolver.addEventListener('click', () => {
+        if (currentStep === 1) {
+            document.body.classList.add('opacity-0');
+            setTimeout(() => window.history.back(), 100);
+        } else if (currentStep === 2) {
+            mostrarPaso(1);
+        } else if (currentStep === 3) {
+            mostrarPaso(2);
+        }
+    });
+
+    if (btnReintentar) {
+        btnReintentar.addEventListener('click', () => {
+            mostrarPaso(2); // Volvemos al paso de monto
+            btnTransferir.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Transferir`;
+        });
+    }
+
+    
+    // Habilitar botón si escribe un CBU/Alias (simulación)
+    inputDestinatario.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        if (val.length >= 4) {
+            btnBuscar.disabled = false;
+            btnBuscar.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            btnBuscar.disabled = true;
+            btnBuscar.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+
+    // Clic en Buscar (Asumimos que es un Alias/CBU NUEVO)
+    btnBuscar.addEventListener('click', () => {
+        destinatarioActual = {
+            nombre: "Usuario Desconocido", // Aquí el backend haría un fetch para traer el nombre real
+            alias: inputDestinatario.value.trim(),
+            esNuevo: true
+        };
+        llenarFichaPaso2();
+        mostrarPaso(2);
+    });
+
+    // Clic en un Contacto Frecuente
+    botonesContactos.forEach(btn => {
+        btn.addEventListener('click', () => {
+            destinatarioActual = {
+                nombre: btn.getAttribute('data-nombre'),
+                alias: btn.getAttribute('data-alias'),
+                esNuevo: false
+            };
+            llenarFichaPaso2();
+            mostrarPaso(2);
+        });
+    });
+
+
+    const llenarFichaPaso2 = () => {
+        nombreDestinatario.innerText = destinatarioActual.nombre;
+        // Tomamos las dos primeras letras para el avatar
+        avatarDestinatario.innerText = destinatarioActual.nombre.substring(0, 2).toUpperCase();
+    };
+
+    btnCambiarDestino.addEventListener('click', () => {
+        mostrarPaso(1);
+    });
+
+    // Habilitar botón de monto solo si es > 0
+    inputMonto.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        if (val > 0) {
+            btnContinuarMonto.disabled = false;
+            btnContinuarMonto.classList.remove('opacity-50', 'cursor-not-allowed');
+            montoActual = val;
+        } else {
+            btnContinuarMonto.disabled = true;
+            btnContinuarMonto.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+
+    btnContinuarMonto.addEventListener('click', () => {
+        mostrarPaso(3);
+    });
+
+
+    const prepararResumen = () => {
+        // Formatear monto a moneda argentina
+        resumenMonto.innerText = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(montoActual);
+        resumenNombre.innerText = destinatarioActual.nombre;
+        resumenAlias.innerText = destinatarioActual.alias;
+
+        // Si el contacto es nuevo, mostramos la opción de guardarlo. Si ya existía, la ocultamos.
+        if (destinatarioActual.esNuevo) {
+            contenedorGuardarContacto.classList.remove('hidden');
+            contenedorGuardarContacto.classList.add('flex');
+            // Limpiar input por si venía de otra búsqueda
+            nombreAgendado.value = '';
+        } else {
+            contenedorGuardarContacto.classList.add('hidden');
+            contenedorGuardarContacto.classList.remove('flex');
+        }
+    };
+
+    // Toggle para Guardar Contacto (Visual y Lógico)
+    toggleGuardar.addEventListener('click', () => {
+        guardarContacto = !guardarContacto;
+        if (guardarContacto) {
+
+            toggleGuardar.classList.replace('bg-slate-300', 'bg-blue-600');
+            toggleBolaGuardar.classList.replace('left-[2px]', 'left-[22px]');
+
+            boxInputNombre.classList.remove('opacity-0', 'h-0', 'border-0');
+            boxInputNombre.classList.add('opacity-100', 'h-12');
+            nombreAgendado.focus();
+        } else {
+
+            toggleGuardar.classList.replace('bg-blue-600', 'bg-slate-300');
+            toggleBolaGuardar.classList.replace('left-[22px]', 'left-[2px]');
+
+            boxInputNombre.classList.remove('opacity-100', 'h-12');
+            boxInputNombre.classList.add('opacity-0', 'h-0', 'border-0');
+        }
+    });
+
+    btnTransferir.addEventListener('click', () => {
+        // Aquí se enviaría el fetch()/Axios al backend
+        console.log("=== ENVIANDO TRANSFERENCIA ===");
+        console.log("Destino:", destinatarioActual.alias);
+        console.log("Monto:", montoActual);
+        
+        if (destinatarioActual.esNuevo && guardarContacto) {
+            const nombrePersonalizado = nombreAgendado.value.trim() || destinatarioActual.nombre;
+            console.log("Acción extra: Guardar en agenda como ->", nombrePersonalizado);
+        } else {
+            console.log("¿Guardar en agenda?: No");
+        }
+        
+        btnTransferir.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
+        setTimeout(() => {
+            // Simulamos ERROR si el monto es mayor a 50000 para probar la pantalla
+            if (montoActual > 50000) {
+                mostrarPaso(5);
+                const contenedorLottieFail = document.getElementById('lottieFail');
+                if (contenedorLottieFail) {
+                    contenedorLottieFail.innerHTML = ''; 
+                    lottie.loadAnimation({
+                        container: contenedorLottieFail, 
+                        renderer: 'svg',
+                        loop: false,
+                        autoplay: true,
+                        path: '../assets/lottie_fail.json' 
+                    });
+                }
+            } else {
+                // Mostrar Paso 4 (Éxito)
+                mostrarPaso(4);
+                
+                const nombreDestinoFinal = (destinatarioActual.esNuevo && guardarContacto && nombreAgendado.value.trim() !== '') ? nombreAgendado.value.trim() : destinatarioActual.nombre;
+                document.getElementById('exitoNombre').innerText = nombreDestinoFinal;
+
+                const contenedorLottie = document.getElementById('lottieSuccess');
+                if (contenedorLottie) {
+                    contenedorLottie.innerHTML = ''; 
+                    lottie.loadAnimation({
+                        container: contenedorLottie, 
+                        renderer: 'svg',
+                        loop: false,
+                        autoplay: true,
+                        path: '../assets/lottie_success.json' 
+                    });
+                }
+            }
+        }, 1500);
+    });
+
+
+    // AUTO-INICIO (Si venimos del Dashboard)
+
+    if (paramAlias && paramNombre) {
+        destinatarioActual = {
+            nombre: paramNombre,
+            alias: paramAlias,
+            esNuevo: false
+        };
+        llenarFichaPaso2();
+        mostrarPaso(2); // Salta directo al monto
+    } else {
+        // Inicialización normal
+        mostrarPaso(1);
+    }
+
+});

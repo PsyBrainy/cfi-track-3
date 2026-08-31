@@ -61,3 +61,70 @@
  *     });
  * }
  */
+
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // ==========================================
+    // LÓGICA DEL MODAL NUEVA CUENTA
+    // ==========================================
+    const btnNuevaCuenta = document.getElementById('btnNuevaCuentaDashboard');
+    const modalNuevaCuenta = document.getElementById('modalNuevaCuenta');
+    const btnCerrarModalCuenta = document.getElementById('btnCerrarModalCuenta');
+    const modalNuevaCuentaContent = document.getElementById('modalNuevaCuentaContent');
+    const btnGuardarModalCuenta = document.getElementById('btnGuardarModalCuenta');
+
+    if (btnNuevaCuenta && modalNuevaCuenta) {
+        
+        // Abrir Modal
+        btnNuevaCuenta.addEventListener('click', (e) => {
+            e.preventDefault();
+            modalNuevaCuenta.classList.remove('hidden');
+            // Pequeño delay para que la transición de opacidad/transformación funcione
+            setTimeout(() => {
+                modalNuevaCuenta.classList.remove('opacity-0');
+                modalNuevaCuentaContent.classList.remove('translate-y-full');
+            }, 10);
+        });
+
+        // Cerrar Modal (función reutilizable)
+        const cerrarModal = () => {
+            modalNuevaCuenta.classList.add('opacity-0');
+            modalNuevaCuentaContent.classList.add('translate-y-full');
+            setTimeout(() => {
+                modalNuevaCuenta.classList.add('hidden');
+            }, 300); // Esperar que termine la transición de CSS
+        };
+
+        // Cerrar al tocar la cruz
+        btnCerrarModalCuenta.addEventListener('click', cerrarModal);
+
+        // Cerrar al tocar el fondo oscuro (backdrop)
+        modalNuevaCuenta.addEventListener('click', (e) => {
+            if (e.target === modalNuevaCuenta) {
+                cerrarModal();
+            }
+        });
+
+        // Lógica de Guardar Contacto (Simulada por ahora)
+        btnGuardarModalCuenta.addEventListener('click', () => {
+            const alias = document.getElementById('inputModalCbu').value;
+            const nombre = document.getElementById('inputModalNombre').value;
+
+            console.log("=== NUEVO CONTACTO AGENDADO DESDE DASHBOARD ===");
+            console.log("Alias:", alias);
+            console.log("Nombre:", nombre);
+
+            btnGuardarModalCuenta.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando...`;
+            
+            // Simular petición al backend
+            setTimeout(() => {
+                btnGuardarModalCuenta.innerHTML = `Guardar Contacto`;
+                cerrarModal();
+                // Limpiar inputs
+                document.getElementById('inputModalCbu').value = '';
+                document.getElementById('inputModalNombre').value = '';
+            }, 1000);
+        });
+    }
+
+});

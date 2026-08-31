@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AlkyWall - Cobrar con QR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .fade-in {
+            animation: fadeInScreen 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeInScreen {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Para el input invisible de monto */
+        .monto-input {
+            all: unset;
+            width: 100%;
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #0f172a; /* slate-900 */
+        }
+        .monto-input::placeholder { color: #cbd5e1; }
+    </style>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen opacity-0 transition-opacity duration-100 ease-in-out">
+    
+    <main class="w-full max-w-[380px] bg-[#f8fafc] rounded-[32px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-[820px] my-8 relative overflow-hidden">
+        
+        <!-- Cabecera -->
+        <header class="relative flex justify-between items-center pt-2 pb-6 shrink-0 z-10">
+            <button id="btnVolver" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 transition" onclick="history.back()">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span class="text-slate-900 text-lg font-extrabold">Cobrar</span>
+            <div class="w-10 h-10"></div>
+        </header>
+
+        <!-- Ingreso de Monto -->
+        <div id="pasoMonto" class="fade-in w-full flex-1 flex flex-col">
+            <div class="flex-1 flex flex-col items-center justify-center">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">¿Cuánto quieres cobrar?</span>
+                <div class="flex items-center justify-center w-full relative mb-10">
+                    <span class="text-3xl font-bold text-slate-400 absolute left-8 top-1/2 -translate-y-1/2">$</span>
+                    <input type="number" id="inputMontoCobro" placeholder="0.00" class="monto-input" autofocus>
+                </div>
+            </div>
+            
+            <button id="btnGenerarQR" class="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-[20px] font-extrabold text-base mb-2 transition hover:scale-[1.02] shadow-[0_8px_20px_rgba(37,99,235,0.4)] opacity-50 cursor-not-allowed" disabled>
+                Generar QR
+            </button>
+        </div>
+
+        <!-- QR Generado -->
+        <div id="pasoQR" class="hidden fade-in w-full flex-1 flex flex-col items-center">
+            
+            <div class="w-full bg-white rounded-3xl p-6 shadow-md border border-slate-100 flex flex-col items-center mt-6">
+                <span class="text-slate-500 font-bold text-sm mb-1">Total a cobrar</span>
+                <span id="montoFinal" class="text-slate-900 font-extrabold text-3xl mb-6">$ 0,00</span>
+
+                <!-- Contenedor del QR Falso -->
+                <div class="w-48 h-48 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center relative p-2">
+                    <!-- Aquí iria el canvas de qrcode.js. Por ahora una imagen estática de simulación -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=alkywall://pay?alias=mi.alias&amount=0" id="imgQR" alt="QR Code" class="w-full h-full rounded-xl mix-blend-multiply opacity-90">
+                    
+                    <!-- Logo centrado en el QR (Estético) -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
+                            <i class="fa-solid fa-wallet text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-[11px] font-medium text-slate-400 text-center mt-6">Muestra este código para recibir el pago al instante.</p>
+            </div>
+
+            <div class="mt-auto w-full flex gap-3 pb-2">
+                <button class="flex-1 h-12 bg-blue-50 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-100 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-share-nodes"></i> Compartir
+                </button>
+                <a href="../dashboard/indexDashboard.html" class="flex-1 h-12 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition flex items-center justify-center page-transition">
+                    Finalizar
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../fx.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputMonto = document.getElementById('inputMontoCobro');
+            const btnGenerarQR = document.getElementById('btnGenerarQR');
+            const pasoMonto = document.getElementById('pasoMonto');
+            const pasoQR = document.getElementById('pasoQR');
+            const montoFinal = document.getElementById('montoFinal');
+            const imgQR = document.getElementById('imgQR');
+
+            // Habilitar botón solo si monto > 0
+            inputMonto.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                if (val > 0) {
+                    btnGenerarQR.disabled = false;
+                    btnGenerarQR.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btnGenerarQR.disabled = true;
+                    btnGenerarQR.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            // Generar QR (Transición visual y actualización de img)
+            btnGenerarQR.addEventListener('click', () => {
+                const monto = parseFloat(inputMonto.value);
+                
+                // Animación de ocultar p
+                pasoMonto.classList.remove('fade-in');
+                pasoMonto.classList.add('hidden');
+                
+                // Actualizar info
+                montoFinal.innerText = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(monto);
+                
+                // Actualizar QR estático con el monto real en la data
+                imgQR.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=alkywall://pay?alias=mi.alias&amount=${monto}`;
+                
+                // Mostrar
+                pasoQR.classList.remove('hidden');
+
+                void pasoQR.offsetWidth;
+                pasoQR.classList.add('fade-in');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             <!-- Menú Links (Gestión y Seguridad) -->
             <nav class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
-                <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-medium text-xs transition page-transition">
+                <a href="../historial/indexHistorial.html" class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-medium text-xs transition page-transition">
                     <i class="fa-solid fa-clock-rotate-left w-5 text-center text-sm"></i> Historial
                 </a>
                 <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-medium text-xs transition page-transition">
