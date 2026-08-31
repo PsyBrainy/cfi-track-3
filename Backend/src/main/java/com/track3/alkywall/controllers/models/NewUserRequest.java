@@ -19,7 +19,7 @@ public record NewUserRequest(
         String email,
 
         @NotBlank
-        @Size(min = 1, max = 255)
+        @Size(min = 8, max = 255)
         String password,
 
         @NotBlank
