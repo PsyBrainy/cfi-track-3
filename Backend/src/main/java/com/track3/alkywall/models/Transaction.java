@@ -33,28 +33,18 @@ public class Transaction {
     private Account sourceAccount;
 
     @ManyToOne
-    @JoinColumn(name = "destination_account_id", nullable = false)
-    private Account destinationAccount;
-
-    @ManyToOne
-    @JoinColumn(name = "transaction_method_id", nullable = false)
-    private TransactionMethod transactionMethod;
-
-    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     Category category;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public Transaction(BigDecimal amount, String type, String status, String description, Account sourceAccount, Account destinationAccount, TransactionMethod transactionMethod, Category category) {
+    public Transaction(BigDecimal amount, String type, String status, String description, Account sourceAccount, Category category) {
         this.amount = amount;
         this.type = type;
         this.status = status;
         this.description = description;
         this.sourceAccount = sourceAccount;
-        this.destinationAccount = destinationAccount;
-        this.transactionMethod = transactionMethod;
         this.category = category;
         this.createdAt = LocalDateTime.now();
     }
