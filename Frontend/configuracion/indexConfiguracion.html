@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlkyWall - Configuración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Animación de pantalla */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen opacity-0 transition-opacity duration-100 ease-in-out">
+    <main class="w-full max-w-[380px] bg-gradient-to-b from-[#f0f6ff] to-white rounded-[32px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-[820px] my-8 relative overflow-hidden">
+        <div class="fade-in w-full h-full flex flex-col overflow-y-auto scrollbar-hide">
+        <!-- Cabecera -->
+        <header class="relative flex justify-between items-center pt-2 pb-6">
+            <!-- Botón Volver -->
+            <button id="btnVolver" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            
+            <!-- Título -->
+            <div class="flex items-center gap-2">
+                <span class="text-slate-900 text-lg font-extrabold font-['Plus_Jakarta_Sans',sans-serif]">Configuración</span>
+            </div>
+            <div class="w-10 h-10"></div>
+        </header>
+
+        <!-- Sección: Datos de la Cuenta -->
+        <div class="mb-6 mt-4">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1">Datos de tu cuenta</h3>
+            <div class="bg-white rounded-[20px] border border-slate-200 shadow-sm overflow-hidden">
+                
+                <!-- Cambiar Alias -->
+                <button id="btnCambiarAlias" class="w-full p-4 border-b border-slate-100 flex justify-between items-center hover:bg-slate-50 transition group">
+                    <div class="flex flex-col items-start gap-1">
+                        <span class="text-sm font-semibold text-slate-700">Cambiar Alias</span>
+                        <span class="text-[10px] text-slate-400">franco.alkywall</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </button>
+
+                <!-- Cambiar Teléfono -->
+                <button id="btnCambiarTelefono" class="w-full p-4 flex justify-between items-center hover:bg-slate-50 transition group">
+                    <div class="flex flex-col items-start gap-1">
+                        <span class="text-sm font-semibold text-slate-700">Cambiar Teléfono</span>
+                        <span class="text-[10px] text-slate-400">+54 2920 xxx-xxx</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Sección: Seguridad -->
+        <div class="mb-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1">Seguridad</h3>
+            <div class="bg-white rounded-[20px] border border-slate-200 shadow-sm overflow-hidden">
+                
+                <!-- Biometría (Toggle) -->
+                <div class="p-4 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-fingerprint text-sm"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-semibold text-slate-700">Huella / FaceID</span>
+                            <span class="text-[10px] text-slate-400">Usar biometría para ingresar</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Toggle Switch (Empieza apagado) -->
+                    <button id="toggleBiometria" class="w-12 h-6 bg-slate-300 rounded-full relative transition-colors duration-300 ease-in-out focus:outline-none">
+                        <div id="toggleBolaBio" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-[2px] shadow-md transition-all duration-300 ease-in-out"></div>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Sección: Preferencias -->
+        <div class="mb-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1">Preferencias</h3>
+            <div class="bg-white rounded-[20px] border border-slate-200 shadow-sm overflow-hidden">
+                
+                <!-- Notificaciones-->
+                <div class="p-4 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                            <i class="fa-regular fa-bell text-sm"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-semibold text-slate-700">Notificaciones</span>
+                            <span class="text-[10px] text-slate-400">Recibir alertas de la cuenta</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Toggle Switch-->
+                    <button id="toggleNotificaciones" class="w-12 h-6 bg-blue-600 rounded-full relative transition-colors duration-300 ease-in-out focus:outline-none">
+                        <div id="toggleBola" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-[26px] shadow-md transition-all duration-300 ease-in-out"></div>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Sección: Zona de Peligro -->
+        <div class="mb-6 mt-auto pt-6">
+            <h3 class="text-xs font-bold text-red-400 uppercase tracking-wider mb-3 px-1">Zona de Riesgo</h3>
+            <div class="bg-white rounded-[20px] border border-red-100 shadow-sm overflow-hidden">
+                
+                <!-- Eliminar Cuenta -->
+                <button id="btnEliminarCuenta" class="w-full p-4 flex justify-between items-center hover:bg-red-50 transition group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 group-hover:bg-red-100 transition">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </div>
+                        <span class="text-sm font-bold text-red-500">Eliminar Cuenta</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-red-300 text-xs group-hover:text-red-500 transition"></i>
+                </button>
+
+            </div>
+        </div>
+        </div>
+    </main>
+    <script src="../fx.js"></script>
+    <script src="srcConfiguracion.js"></script>
+</body>
+</html>
