@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlkyWall - Panel Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 flex items-center justify-center h-[100dvh] overflow-hidden md:h-screen md:overflow-auto opacity-0 transition-opacity duration-100 ease-in-out">
+    
+    <main class="w-full md:max-w-[380px] bg-gradient-to-b from-[#f0f6ff] to-white md:rounded-[32px] p-6 md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-[100dvh] md:h-[820px] md:my-8 relative overflow-hidden md:border-[6px] md:border-white">
+        <div class="fade-in w-full h-full flex flex-col min-h-0">
+            
+            <!-- Cabecera -->
+            <header class="relative flex justify-between items-center pt-2 pb-6 shrink-0">
+                <a href="../dashboard/indexDashboard.html" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+                <div class="flex items-center gap-2">
+                    <span class="text-slate-900 text-lg font-extrabold">Gestión Admin</span>
+                </div>
+                <!-- Botón Mensajes de Soporte -->
+                <button class="w-10 h-10 bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:bg-slate-50 rounded-xl flex items-center justify-center text-sm shadow-sm transition relative cursor-pointer" title="Mensajes de Soporte">
+                    <i class="fa-regular fa-comment-dots text-lg"></i>
+                    <!-- Badge de notificaciones -->
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white box-content"></span>
+                </button>
+            </header>
+
+            <!-- Buscador -->
+            <section class="relative mb-6 shrink-0">
+                <div class="w-full bg-white border border-slate-200 rounded-2xl flex items-center px-4 py-1 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm"></i>
+                    <input type="text" id="inputBuscarUsuario" placeholder="Buscar por nombre, DNI o CVU..." class="bg-transparent text-xs font-semibold text-slate-700 w-full placeholder-slate-400 focus:outline-none py-3 ml-3">
+                </div>
+            </section>
+
+            <!-- Lista de Usuarios -->
+            <div class="flex-1 overflow-y-auto scrollbar-hide flex flex-col gap-3 pb-6" id="listaUsuarios">
+                <!-- Se inyectan las tarjetas desde JS -->
+            </div>
+
+            <!-- Estado Vacio -->
+            <div id="msgVacio" class="hidden flex-col items-center justify-center h-full opacity-60">
+                <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-slate-400 text-2xl mb-4">
+                    <i class="fa-solid fa-users-slash"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-500">No se encontraron usuarios.</p>
+            </div>
+
+        </div>
+
+        <!-- MODAL DE CONFIRMACIÓN DE ACCIÓN -->
+        <div id="modalConfirmacion" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
+            <div class="bg-white w-full rounded-t-[32px] p-6 pb-8 shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col items-center text-center" id="modalConfirmacionContent">
+                
+                <div id="iconoAlerta" class="w-16 h-16 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-2xl mb-4 shadow-inner">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                
+                <h3 id="tituloAlerta" class="text-xl font-extrabold text-slate-900 mb-2">¿Estás seguro?</h3>
+                <p id="descAlerta" class="text-sm font-medium text-slate-500 mb-8 px-2">
+                    Esta acción modificará el estado del usuario en el sistema.
+                </p>
+
+                <div class="w-full flex gap-3">
+                    <button id="btnCancelarAccion" class="flex-1 h-14 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">
+                        Cancelar
+                    </button>
+                    <button id="btnConfirmarAccion" class="flex-1 h-14 bg-red-600 text-white rounded-2xl font-bold text-sm hover:bg-red-700 transition shadow-md">
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL EDITAR USUARIO -->
+        <div id="modalEditarUsuario" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-end justify-center hidden opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
+            <div class="bg-white w-full rounded-t-[32px] p-6 pb-8 shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col gap-4 relative" id="modalEditarUsuarioContent">
+                <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2"></div>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-lg font-extrabold text-slate-900">Editar Usuario</h3>
+                    <button id="btnCerrarEditar" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                
+                <div class="flex flex-col gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre</label>
+                        <input type="text" id="inputEditNombre" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl px-4 py-3 mt-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Apellido</label>
+                        <input type="text" id="inputEditApellido" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl px-4 py-3 mt-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="flex-1">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">DNI</label>
+                            <input type="number" id="inputEditDni" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl px-4 py-3 mt-1 focus:outline-none focus:border-blue-500 transition" style="-moz-appearance: textfield;">
+                        </div>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Rol</label>
+                            <select id="selectEditRol" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl px-4 py-3 mt-1 focus:outline-none focus:border-blue-500 transition appearance-none">
+                                <option value="usuario">Usuario</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-10 text-slate-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btnGuardarEdicion" class="w-full mt-4 h-14 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition shadow-[0_8px_20px_rgba(37,99,235,0.4)]">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+
+        <!-- NOTIFICACIÓN TIPO TOAST -->
+        <div id="toastNotificacion" class="absolute top-6 left-1/2 -translate-x-1/2 z-[80] flex items-center gap-3 px-4 py-3 bg-slate-900 text-white rounded-2xl shadow-2xl transition-all duration-300 opacity-0 -translate-y-12 pointer-events-none w-11/12 max-w-[340px]">
+            <div id="toastIconoContainer" class="w-8 h-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0">
+                <i id="toastIcono" class="fa-solid fa-check text-sm"></i>
+            </div>
+            <p id="toastMensaje" class="text-xs font-bold leading-tight flex-1">Acción realizada.</p>
+        </div>
+
+    </main>
+
+    <script src="../fx.js"></script>
+    <script src="srcAdmin.js"></script>
+</body>
+</html>

@@ -3,13 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlkyWall</title>
+    <title>AlkyWall - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/71dbc4a81d.js" crossorigin="anonymous"></script>
+    <style>
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        /* AnimaciÃ³n de pantalla */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body>
-    <h1 id="welcome"></h1>
-    <p id="balance">***</p>
+<body class="bg-slate-50 flex items-center justify-center h-[100dvh] overflow-hidden md:h-screen md:overflow-auto font-sans opacity-0">
+
+    <main class="w-full md:max-w-[380px] bg-gradient-to-b from-[#f0f6ff] to-white md:rounded-[32px] p-6 md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-[100dvh] md:h-[820px] md:my-8 overflow-hidden relative">
+        <div class="fade-in flex flex-col h-full">
+        <!-- Cabecera de la pantalla -->
+        <header class="relative flex justify-between items-center pt-2 pb-2">
+            <!-- BotÃ³n MenÃº con ID para JS -->
+            <button id="open-menu-btn" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            
+            <!-- Logo AlkyWall -->
+            <div class="flex items-center gap-2">
+                <img src="../assets/logo.png" alt="AlkyWall Logo" class="w-8 h-8 object-contain">
+                <span class="text-slate-900 text-lg font-extrabold font-['Plus_Jakarta_Sans',sans-serif]">Alky<span class="text-blue-600">Wall</span></span>
+            </div>
+            
+            <!-- BotÃ³n Notificaciones -->
+            <a href="../notificaciones/indexNotificaciones.html" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition cursor-pointer page-transition relative" title="Notificaciones">
+                <i class="fa-regular fa-bell"></i>
+                <!-- Badge de notificaciones no leÃ­das -->
+                <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white box-content"></span>
+            </a>
+        </header>
+
+        <!-- Barra de BÃºsqueda -->
+        <section class="relative mt-6 flex gap-3">
+            <div class="flex-1 bg-white border border-slate-200 rounded-xl flex items-center px-4 shadow-sm">
+                <input type="text" placeholder="Buscar contactos, CVU..." class="bg-transparent text-[11px] text-slate-600 w-full placeholder-slate-400 focus:outline-none py-3.5">
+            </div>
+            <button class="w-[46px] h-[46px] bg-blue-600 rounded-xl flex items-center justify-center text-white hover:bg-blue-700 transition shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] flex-shrink-0">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </button>
+        </section>
+
+        <!-- Tarjeta de Saldo -->
+        <section class="relative mt-6 p-6 rounded-[24px] bg-gradient-to-br from-blue-600 to-blue-400 text-white shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <p class="text-[10px] font-bold text-blue-50 flex items-center gap-1.5 uppercase tracking-wide">
+                Saldo Total Disponible <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </p>
+            <h1 id="saldoTotal" class="text-[34px] font-bold mt-1 tracking-tight">
+                $ 7.850<span class="text-xl opacity-80">,00</span>
+            </h1>
+            <div class="absolute top-6 right-6 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-white text-[10px] shadow-sm backdrop-blur-sm">
+                <i class="fa-solid fa-check"></i>
+            </div>
+        </section>
+
+        <!-- Enviar Dinero A -->
+        <section class="relative mt-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    ENVIAR DINERO A <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                </h3>
+                <a href="../contactos/indexContactos.html" class="text-[10px] text-blue-600 font-bold hover:text-blue-700 transition page-transition">Ver todos</a>
+            </div>
+
+            <!--leer archivo srcDashboard.js para implementaciÃ³n-->
+            <div id="listaContactos" class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6">
+                <!-- BotÃ³n de Nueva Cuenta (Abre Modal) -->
+                <button id="btnNuevaCuentaDashboard" class="min-w-[76px] h-[92px] rounded-[20px] border-2 border-dashed border-slate-300 bg-slate-50 flex flex-col items-center justify-center gap-2 hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-plus text-blue-600 text-lg"></i>
+                    <span class="text-[10px] text-slate-500 text-center leading-tight font-semibold">Nueva<br>Cuenta</span>
+                </button>
+                <!-- Contactos RÃ¡pidos (Van directo a Paso 2 de transferencia) -->
+                <a href="../transferencia/indexTransferencia.html?alias=franco.alkywall&nombre=Franco%20C." class="min-w-[76px] h-[92px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
+                    <div class="w-[38px] h-[38px] rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">FC</div>
+                    <span class="text-[10px] text-slate-600 font-semibold">Franco C.</span>
+                </a>
+                <a href="../transferencia/indexTransferencia.html?alias=xavier.alkywall&nombre=Xavier." class="min-w-[76px] h-[92px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
+                    <div class="w-[38px] h-[38px] rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">X</div>
+                    <span class="text-[10px] text-slate-600 font-semibold">Xavier.</span>
+                </a>
+                <a href="../transferencia/indexTransferencia.html?alias=jonatan.alkywall&nombre=Jonatan" class="min-w-[76px] h-[92px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
+                    <div class="w-[38px] h-[38px] rounded-full bg-orange-100 text-orange-500 flex items-center justify-center font-bold text-xs shadow-inner">J</div>
+                    <span class="text-[10px] text-slate-600 font-semibold">Jonatan</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Movimientos Recientes -->
+        <section class="relative mt-8 flex-1 flex flex-col min-h-0">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    MOVIMIENTOS RECIENTES
+                </h3>
+                <a href="../historial/indexHistorial.html" class="text-[10px] text-slate-400 font-bold flex items-center gap-1.5 hover:text-blue-600 transition page-transition">
+                    <i class="fa-regular fa-calendar text-blue-600/70"></i> Historial
+                </a>
+            </div>
+            <!--leer archivo srcDashboard.js para implementaciÃ³n-->
+            <div id="listaMovimientos" class="flex-1 overflow-y-auto scrollbar-hide pb-6 flex flex-col gap-3 -mx-2 px-2">
+                <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full border border-pink-100 flex items-center justify-center text-pink-500 bg-pink-50">
+                            <i class="fa-solid fa-compact-disc text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                NETFLIX <span class="w-1 h-1 bg-pink-500 rounded-full"></span>
+                            </p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Compra</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-slate-800 tracking-wide">- $ 12.500,00</span>
+                </div>
+                <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full border border-sky-100 flex items-center justify-center text-sky-500 bg-sky-50">
+                            <i class="fa-brands fa-steam-symbol text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                STEAM <span class="w-1 h-1 bg-sky-500 rounded-full"></span>
+                            </p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">Compra de software</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-slate-800 tracking-wide">- $ 19.640,00</span>
+                </div>
+                <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full border border-blue-100 flex items-center justify-center text-blue-600 bg-blue-50">
+                            <i class="fa-solid fa-lock text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                Transferencia Recibida <span class="w-1 h-1 bg-blue-600 rounded-full"></span>
+                            </p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">De: Franco Colleti (CVU)</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-blue-600 tracking-wide">+ $ 19900,00</span>
+                </div>
+            </div>
+        </section>
+        </div>
+    
+    <!-- MODAL NUEVA CUENTA (AÃ±adir a Agenda)       -->
+
+    <div id="modalNuevaCuenta" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full md:max-w-[380px] rounded-t-[32px] p-6 shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col" id="modalNuevaCuentaContent">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-extrabold text-slate-900">Agendar Cuenta</h3>
+                <button id="btnCerrarModalCuenta" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col gap-4 mb-6">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block pl-1">Alias, CBU o CVU</label>
+                    <input type="text" id="inputModalCbu" placeholder="Ej: mecanico.mp" class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block pl-1">Nombre para agendar</label>
+                    <input type="text" id="inputModalNombre" placeholder="Ej: MecÃ¡nico Juan" class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                </div>
+            </div>
+
+            <button id="btnGuardarModalCuenta" class="w-full h-12 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition shadow-md">
+                Guardar Contacto
+            </button>
+        </div>
+    </div>
+
+        <!-- MODAL CARGAR SALDO -->
+    <div id="modalCargarSaldo" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
+        <div class="bg-white w-full rounded-t-[32px] p-6 shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col relative" id="modalCargarSaldoContent">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-extrabold text-slate-900">Ingresar Dinero</h3>
+                <button id="btnCerrarModalSaldo" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center mb-8 mt-2">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">¿Cuánto quieres depositar?</span>
+                <div class="flex items-center justify-center w-full relative">
+                    <span class="text-3xl font-bold text-slate-400 absolute left-8 top-1/2 -translate-y-1/2">$</span>
+                    <input type="number" id="inputMontoDeposito" placeholder="0.00" min="1" step="0.01" class="all-unset w-full text-center text-4xl font-extrabold text-slate-900 bg-transparent outline-none placeholder-slate-300 focus:ring-0 border-none" style="-moz-appearance: textfield;">
+                </div>
+            </div>
+
+            <button id="btnConfirmarDeposito" class="w-full h-14 bg-blue-600 text-white rounded-2xl font-bold text-base hover:bg-blue-700 transition shadow-[0_8px_20px_rgba(37,99,235,0.4)] opacity-50 cursor-not-allowed" disabled>
+                Confirmar Depósito
+            </button>
+        </div>
+    </div>
+
+    <!-- PANTALLA ÉXITO DEPÓSITO -->
+    <div id="pantallaExitoDeposito" class="absolute inset-0 bg-white z-[70] hidden flex-col items-center justify-center px-6 pb-20 opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
+        <div id="lottieExitoDeposito" class="w-64 h-64"></div>
+        <h2 class="text-2xl font-extrabold text-slate-900 mt-4 text-center">¡Depósito exitoso!</h2>
+        <p class="text-sm font-medium text-slate-500 mt-2 text-center">El dinero ya está acreditado en tu cuenta.</p>
+        <button id="btnVolverExitoDeposito" class="mt-10 w-full h-14 bg-slate-100 text-blue-600 rounded-[20px] font-extrabold text-base transition hover:bg-slate-200 flex items-center justify-center gap-2">
+            Volver al inicio
+        </button>
+    </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+      <script src="../fx.js"></script>
+    <script src="../menu/menu.js"></script>
+    <script src="../menu/bottomNav.js"></script>
     <script src="srcDashboard.js"></script>
-    <script src="../fx.js"></script>
 </body>
 </html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlkyWall - Notificaciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Animación de pantalla */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 flex items-center justify-center h-[100dvh] overflow-hidden md:h-screen md:overflow-auto opacity-0 transition-opacity duration-100 ease-in-out">
+    
+    <main class="w-full md:max-w-[380px] bg-gradient-to-b from-[#f0f6ff] to-white md:rounded-[32px] p-6 md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-[100dvh] md:h-[820px] md:my-8 relative overflow-hidden">
+        <div class="fade-in w-full h-full flex flex-col">
+        <!-- Cabecera -->
+        <header class="relative flex justify-between items-center pt-2 pb-6 shrink-0">
+            <!-- Botón Volver -->
+            <button id="btnVolver" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            
+            <!-- Título -->
+            <div class="flex items-center gap-2">
+                <span class="text-slate-900 text-lg font-extrabold font-['Plus_Jakarta_Sans',sans-serif]">Notificaciones</span>
+            </div>
+            
+            <!-- Botón Marcar como Leídas -->
+            <button id="btnMarcarTodas" class="w-10 h-10 rounded-xl flex items-center justify-center text-blue-600 hover:bg-blue-50 transition" title="Marcar todas como leídas">
+                <i class="fa-solid fa-check-double"></i>
+            </button>
+        </header>
+
+        <!-- Contenedor de la lista -->
+        <div id="listaNotificaciones" class="flex-1 overflow-y-auto scrollbar-hide -mx-6 flex flex-col pb-6">
+            
+            <!-- Notificación: No Leída (Fondo con tinte azul y puntito) -->
+            <div class="notif-item notif-no-leida p-4 bg-blue-50/40 border-b border-blue-50 flex gap-4 hover:bg-blue-50/80 transition cursor-pointer relative">
+                <!-- Indicador de no leído -->
+                <div class="absolute top-1/2 -translate-y-1/2 left-2 w-1.5 h-1.5 bg-blue-600 rounded-full puntito-azul"></div>
+                
+                <!-- Ícono -->
+                <div class="icono-wrapper w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                </div>
+                
+                <!-- Contenido -->
+                <div class="flex-1">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <h4 class="notif-titulo text-xs font-extrabold text-slate-900">Transferencia recibida</h4>
+                        <span class="notif-fecha text-[9px] font-bold text-blue-600">Hoy, 14:30</span>
+                    </div>
+                    <p class="notif-texto text-[10px] font-semibold text-slate-700 leading-tight pr-2">Franco C. te envió $1.500,00.</p>
+                </div>
+            </div>
+
+            <!-- Notificación: No Leída (Seguridad) -->
+            <div class="notif-item notif-no-leida p-4 bg-blue-50/40 border-b border-blue-50 flex gap-4 hover:bg-blue-50/80 transition cursor-pointer relative">
+                <div class="absolute top-1/2 -translate-y-1/2 left-2 w-1.5 h-1.5 bg-blue-600 rounded-full puntito-azul"></div>
+                <div class="icono-wrapper w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 shrink-0">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <h4 class="notif-titulo text-xs font-extrabold text-slate-900">Nuevo inicio de sesión</h4>
+                        <span class="notif-fecha text-[9px] font-bold text-blue-600">Hoy, 09:15</span>
+                    </div>
+                    <p class="notif-texto text-[10px] font-semibold text-slate-700 leading-tight pr-2">Se detectó un acceso desde un nuevo dispositivo (Windows).</p>
+                </div>
+            </div>
+
+            <!-- Notificación: Leída (Fondo blanco, sin puntito, texto más suave) -->
+            <div class="p-4 bg-white border-b border-slate-100 flex gap-4 hover:bg-slate-50 transition cursor-pointer relative opacity-70">
+                <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0 ml-1.5">
+                    <i class="fa-solid fa-hand-wave"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <h4 class="text-xs font-bold text-slate-800">¡Bienvenido a AlkyWall!</h4>
+                        <span class="text-[9px] font-medium text-slate-400">Ayer</span>
+                    </div>
+                    <p class="text-[10px] font-medium text-slate-500 leading-tight pr-2">Tu cuenta fue creada con éxito. Ya puedes comenzar a operar.</p>
+                </div>
+            </div>
+
+            <!-- Notificación: Leída (Error) -->
+            <div class="p-4 bg-white border-b border-slate-100 flex gap-4 hover:bg-slate-50 transition cursor-pointer relative opacity-70">
+                <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0 ml-1.5">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start mb-0.5">
+                        <h4 class="text-xs font-bold text-slate-800">Transferencia fallida</h4>
+                        <span class="text-[9px] font-medium text-slate-400">28 Ago</span>
+                    </div>
+                    <p class="text-[10px] font-medium text-slate-500 leading-tight pr-2">No pudimos procesar tu envío a Jonatan por saldo insuficiente.</p>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    </main>
+    <script src="../fx.js"></script>
+    <script src="srcNotificaciones.js"></script>
+</body>
+</html>
