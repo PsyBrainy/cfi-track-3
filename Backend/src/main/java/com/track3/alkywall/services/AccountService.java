@@ -30,4 +30,12 @@ public class AccountService {
                 account.getIsActive()
         );
     }
+    public Account getAccountByUserEmail(String userEmail){
+        Optional<Account> account = accountRepository.findByUserEmail(userEmail);
+        if(account.isPresent()){
+            return account.get();
+        } else{
+            throw new AccountNotFoundException("No se pudo encontrar la cuenta");
+        }
+    }
 }
