@@ -11,13 +11,13 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    public Optional<Account> findByUserEmail(String userEmail);
+    Optional<Account> findByUserEmail(String userEmail);
 
     public Optional<BigDecimal> getSaldoById(Long id);
 
     @Modifying
-    @Query("update Account a set a.saldo = ?2 where a.id = ?1")
-    void updateSaldoById(Long id, BigDecimal amount);
+    @Query("update Account a set a.balance = ?2 where a.id = ?1")
+    void updateBalanceById(Long id, BigDecimal amount);
 
-
+    Optional<Account> findByAccountNumber(String accountNumber);
 }

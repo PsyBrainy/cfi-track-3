@@ -16,33 +16,33 @@ import java.time.LocalDateTime;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @Column(nullable = false, unique = true)
-    Long accountNumber;
+    @Column(nullable = false, unique = true, length = 22)
+    private String accountNumber;
 
     @Column(nullable = false)
-    BigDecimal saldo;
+    private BigDecimal balance;
 
     @Column(nullable = false, length = 3)
-    String currency;
+    private String currency;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    User user;
+    private User user;
 
     @Column(nullable = false)
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    Boolean isActive;
+    private Boolean isActive;
 
     @Column(nullable = false, unique = true)
-    String alias;
+    private String alias;
 
-    public Account(Long accountNumber, BigDecimal saldo, String currency, User user, String alias){
-        this.accountNumber = accountNumber;
-        this.saldo = saldo;
+    public Account(BigDecimal balance, String currency, User user, String alias){
+        this.accountNumber = "";
+        this.balance = balance;
         this.currency = currency;
         this.user = user;
         this.alias = alias;
