@@ -1,3 +1,80 @@
+// ==========================================
+// INTEGRACI”N CON BACKEND (Desde develop)
+// ==========================================
+// Se activa al cargar la pogina
+addEventListener("DOMContentLoaded", (event) => onInit(event));
+
+// Clase que almacenaro los datos de la cuenta
+class AccountData {
+    constructor(balance, accountNumber, currency, alias, isActive){
+        this.balance = balance;
+        this.accountNumber = accountNumber;
+        this.currency = currency;
+        this.alias = alias;
+        this.isActive = isActive;
+    }
+}
+
+// Funcin asncrona que se ejcuta al cargar la pogina se encarga de comprobar
+// si hay o no un token y en caso de no haberlo o ser involido redirige a login
+async function onInit(event) {
+    const token = localStorage.getItem("token");
+    if (token != null) {
+        let accountData = await getAccount();
+        if (accountData) {
+            mostrarInfo(accountData);
+        }
+    } else {
+        // window.location.href = "../login/indexLogin.html"; // Comentado temporalmente si se quiere ver el mockup
+    }
+}
+
+// Instancia para poder realizar peticiones HTTP
+const axiosInstance = typeof axios !== 'undefined' ? axios.create({
+    baseURL: "http://localhost:8080/api",
+    timeout: 5000,
+    headers: {
+        "Authorization": "Bearer " + localStorage.getItem("token"),
+        "Content-Type": "application/json"
+    },
+}) : null;
+
+const getAccount = async () => {
+    if (!axiosInstance) return null;
+    try {
+        const response = await axiosInstance.get("/account");
+        return response.data;
+    }
+    catch (error) {
+        // window.location.href= "../login/indexLogin.html";
+        console.error(error);
+        return null;
+    }
+}
+
+function mostrarInfo(accountData){
+    const balanceEl = document.getElementById('saldoTotal');
+    if (balanceEl) {
+        balanceEl.textContent = "$ " + parseFloat(accountData.balance).toFixed(2);
+    }
+    
+    // Si tuvieramos un H1 'welcome', podramos inyectarlo aqu
+    const welcome = document.getElementById('welcome');
+    if (welcome) welcome.textContent = "Hola de nuevo";
+}
+
+function mostrarMensaje(texto, elemento) {
+    elemento.textContent = texto;
+    elemento.style.display = "block"
+}
+function ocultarMensaje(elemento) {
+    elemento.textContent = '';
+    elemento.style.display = "none";
+}
+
+// ==========================================
+// L”GICA DE UI (NUESTRA)
+// ==========================================
 /**
  * Hola, hola! ac√° hay un ejemplo de c√≥mo generar los componentes din√°micamente
  * cuando leas los datos desde el Backend

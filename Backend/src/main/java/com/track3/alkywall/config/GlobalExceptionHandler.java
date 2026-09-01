@@ -1,7 +1,8 @@
 package com.track3.alkywall.config;
 
 import com.track3.alkywall.config.exceptions.LoginFailedException;
-import com.track3.alkywall.config.exceptions.UserAlreadyExistsException;
+import com.track3.alkywall.config.exceptions.NotFoundException;
+import com.track3.alkywall.config.exceptions.AlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,8 +14,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ApiResponse> userAlreadyExistsException(UserAlreadyExistsException exception){
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiResponse> alreadyExistsException(AlreadyExistsException exception){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(
                 false,
                 exception.getMessage()
@@ -41,6 +42,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(
            false,
            exception.getMessage()
+        ));
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiResponse> notFoundException(NotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(
+                false,
+                exception.getMessage()
         ));
     }
 }

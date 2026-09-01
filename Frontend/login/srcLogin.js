@@ -31,7 +31,7 @@ async function logIn(data) {
                     mostrarMensaje("Inicio de sesión exitoso", document.getElementById('responseGeneral'));
                     window.location.href = "../dashboard/indexDashboard.html";
                 } else {
-                    mostrarMensaje("No se pudo iniciar sesión", document.getElementById('responseGeneral'));
+                    mostrarMensaje("Email o contraseña incorrectos", document.getElementById('responseGeneral'));
                 }
             } catch (error) {
                 mostrarMensaje("Ocurrió un error al iniciar sesión", document.getElementById('responseGeneral'));
