@@ -1,5 +1,6 @@
 package com.track3.alkywall.services.models;
 
+import com.track3.alkywall.models.Account;
 import com.track3.alkywall.models.Role;
 import com.track3.alkywall.models.User;
 
@@ -13,7 +14,8 @@ public record DomainUser(
         String dni,
         Role role,
         Boolean isActive,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Account account
 ) {
     public static DomainUser from(User user){
         return new DomainUser(
@@ -24,7 +26,8 @@ public record DomainUser(
                 user.getDni(),
                 user.getRole(),
                 user.getIsActive(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.getAccount()
         );
     }
 }

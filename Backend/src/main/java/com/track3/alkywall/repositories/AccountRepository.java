@@ -19,5 +19,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("update Account a set a.balance = ?2 where a.id = ?1")
     void updateBalanceById(Long id, BigDecimal amount);
 
-    Optional<Account> findByAccountNumber(String accountNumber);
+    @Query("select a from Account a where a.accountNumber = ?1 or a.alias = ?1")
+    Optional<Account> findByAccountNumberOrAlias(String identifier);
+
+    boolean existsByAccountNumberAndUserEmail(String accountNumber, String userEmail);
 }

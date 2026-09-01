@@ -40,6 +40,7 @@ public record UserUpdateRequest(
                 userUpdateRequest.dni(),
                 new Role(userUpdateRequest.role()),
                 userUpdateRequest.isActive(),
+                null,
                 null
         );
     }

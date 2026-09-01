@@ -12,7 +12,8 @@ public record UserResponse (
         String dni,
         String role,
         Boolean isActive,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        AccountDTO account
 ){
     public static UserResponse from(DomainUser user){
         return new UserResponse(
@@ -23,7 +24,8 @@ public record UserResponse (
                 user.dni(),
                 user.role().getName(),
                 user.isActive(),
-                user.createdAt()
+                user.createdAt(),
+                user.account() == null ? null : AccountDTO.from(user.account())
         );
     }
 }

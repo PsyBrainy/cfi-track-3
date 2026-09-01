@@ -26,19 +26,10 @@ public class AccountService {
     public AccountDTO getAccountDTOByUserEmail(String userEmail){
         Optional<Account> account = accountRepository.findByUserEmail(userEmail);
         if(account.isPresent()){
-            return toDTO(account.get());
+            return AccountDTO.from(account.get());
         } else{
             throw new NotFoundException("No se pudo encontrar la cuenta");
         }
-    }
-
-    private static AccountDTO toDTO(Account account){
-        return new AccountDTO(
-                account.getBalance(),
-                account.getCurrency(),
-                account.getAlias(),
-                account.getIsActive()
-        );
     }
 
     public Account getAccountByUserEmail(String userEmail){
@@ -68,16 +59,20 @@ public class AccountService {
     }
 
     private String generateAlias(String email){
-        String[] words = {"sol", "luna", "pajaro", "caballo", "vaca", "gato", "perro"};
+        String[] words = {"sol", "luna", "hoja", "caballo", "vaca", "gato", "perro"};
         String emailStart = email.substring(0, email.indexOf("@"));
 
         return
                 emailStart+"."+
                 words[random.nextInt(words.length)]+"."+
-                random.nextInt(8);
+                random.nextInt(1000);
     }
 
     private String generateAccountNumber(Long id){
         return String.format("%022d", id);
+    }
+
+    public boolean accountExistsByAccountNumberAndEmail(String accountNumber, String email){
+        return accountRepository.existsByAccountNumberAndUserEmail(accountNumber, email);
     }
 }

@@ -14,27 +14,27 @@ import java.time.LocalDateTime;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
     private BigDecimal amount;
 
     @Column(nullable = false)
-    String type;
+    private String type;
 
     @Column(nullable = false)
-    String status;
+    private String status;
 
     @Column(nullable = false)
-    String description;
+    private String description;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "source_account_id", nullable = false)
     private Account sourceAccount;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    Category category;
+    private Category category;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
