@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
 
-    // ==========================================
+
     // RENDERIZADO DEL HISTORIAL Y FILTROS
-    // ==========================================
+
     const listaMovimientos = document.getElementById('listaMovimientos');
     const msgHistorialVacio = document.getElementById('msgHistorialVacio');
     const botonesFiltro = document.querySelectorAll('.filtro-btn');
@@ -137,17 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Manejar Clicks en los Filtros
     botonesFiltro.forEach(btn => {
         btn.addEventListener('click', () => {
-            // 1. Quitar estilos activos de todos
+            //Quitar estilos activos de todos
             botonesFiltro.forEach(b => {
                 b.classList.remove('bg-slate-900', 'text-white', 'shadow-md', 'activo');
                 b.classList.add('bg-white', 'border', 'border-slate-200', 'text-slate-600', 'hover:bg-slate-50');
             });
 
-            // 2. Aplicar estilos activos al clickeado
+            // Aplicar estilos activos al clickeado
             btn.classList.add('bg-slate-900', 'text-white', 'shadow-md', 'activo');
             btn.classList.remove('bg-white', 'border', 'border-slate-200', 'text-slate-600', 'hover:bg-slate-50');
 
-            // 3. Renderizar lista filtrada
+            //  Renderizar lista filtrada
             const filtroElegido = btn.getAttribute('data-filtro');
             renderizarLista(filtroElegido);
         });

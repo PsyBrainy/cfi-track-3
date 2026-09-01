@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Guardar Contacto (Simulado)
+        // Guardar Contacto
         btnGuardarModalCuenta.addEventListener('click', () => {
             const alias = document.getElementById('inputModalCbu').value;
             const nombre = document.getElementById('inputModalNombre').value;
@@ -165,8 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (contactoTarget) {
                 // Muestra un estado de cargando
                 btnConfirmarEliminar.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
-                
-                // Simulación de delay de API
+
                 setTimeout(() => {
                     // Cerrar modal
                     cerrarModalEliminar();
@@ -191,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         contactoTarget.style.overflow = "hidden";
                     }, 200);
 
-                    // Finalmente, eliminar del DOM
+                    // Finalmente eliminar del DOM
                     setTimeout(() => {
                         contactoTarget.remove();
                     }, 500);

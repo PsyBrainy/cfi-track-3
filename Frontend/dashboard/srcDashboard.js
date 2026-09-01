@@ -7,7 +7,7 @@
  * Cuando conectes los datos reales, los borramos
  *
  * CONTACTOS RECIENTES
- * ----------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------
  * function cargarContactosRecientes(contactosBD) {
  *     const contenedor = document.getElementById('listaContactos');
  *     
@@ -28,7 +28,7 @@
 /**
  * ----------------------------------------------------------------------------
  * HISTORIAL DE MOVIMIENTOS
- * ----------------------------------------------------------------------------
+ * ----------------------------------------------------------------------
  * function cargarMovimientos(movimientosBD) {
  *     const contenedor = document.getElementById('listaMovimientos');
  *     
@@ -64,9 +64,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // ==========================================
+
     // LÓGICA DEL MODAL NUEVA CUENTA
-    // ==========================================
+
     const btnNuevaCuenta = document.getElementById('btnNuevaCuentaDashboard');
     const modalNuevaCuenta = document.getElementById('modalNuevaCuenta');
     const btnCerrarModalCuenta = document.getElementById('btnCerrarModalCuenta');
@@ -79,14 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnNuevaCuenta.addEventListener('click', (e) => {
             e.preventDefault();
             modalNuevaCuenta.classList.remove('hidden');
-            // Pequeño delay para que la transición de opacidad/transformación funcione
             setTimeout(() => {
                 modalNuevaCuenta.classList.remove('opacity-0');
                 modalNuevaCuentaContent.classList.remove('translate-y-full');
             }, 10);
         });
 
-        // Cerrar Modal (función reutilizable)
+        // Cerrar Modal
         const cerrarModal = () => {
             modalNuevaCuenta.classList.add('opacity-0');
             modalNuevaCuentaContent.classList.add('translate-y-full');
@@ -98,14 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cerrar al tocar la cruz
         btnCerrarModalCuenta.addEventListener('click', cerrarModal);
 
-        // Cerrar al tocar el fondo oscuro (backdrop)
+        // Cerrar al tocar el fondo oscuro
         modalNuevaCuenta.addEventListener('click', (e) => {
             if (e.target === modalNuevaCuenta) {
                 cerrarModal();
             }
         });
 
-        // Lógica de Guardar Contacto (Simulada por ahora)
+        // Lógica de Guardar Contacto
         btnGuardarModalCuenta.addEventListener('click', () => {
             const alias = document.getElementById('inputModalCbu').value;
             const nombre = document.getElementById('inputModalNombre').value;
@@ -124,6 +123,201 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('inputModalCbu').value = '';
                 document.getElementById('inputModalNombre').value = '';
             }, 1000);
+        });
+    }
+
+
+
+    // ANÁLISIS DE GASTOS
+
+    const renderizarAnalisisGastos = () => {
+        const contenedorBarras = document.getElementById('contenedorBarrasGastos');
+        const barraSegmentadaGastos = document.getElementById('barraSegmentadaGastos');
+        const textoTotalGastos = document.getElementById('textoTotalGastos');
+        const tarjetaAnalisisGastos = document.getElementById('tarjetaAnalisisGastos');
+        const iconoAcordeonGastos = document.getElementById('iconoAcordeonGastos');
+
+        if (!contenedorBarras || !barraSegmentadaGastos) return;
+
+        // DATOS SIMULADOS DEL BACKEND
+        const datosAgrupadosSimulados = [
+            { categoria: 'Supermercado', monto: 45000, colorClass: 'bg-indigo-500', icon: 'fa-cart-shopping', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-500' },
+            { categoria: 'Transporte', monto: 15000, colorClass: 'bg-sky-500', icon: 'fa-car', iconBg: 'bg-sky-50', iconColor: 'text-sky-500' },
+            { categoria: 'Comida', monto: 10000, colorClass: 'bg-orange-500', icon: 'fa-burger', iconBg: 'bg-orange-50', iconColor: 'text-orange-500' }
+        ];
+
+        const totalGastos = datosAgrupadosSimulados.reduce((acc, item) => acc + item.monto, 0);
+        textoTotalGastos.innerText = `Total: $ ${totalGastos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
+
+        contenedorBarras.innerHTML = '';
+        barraSegmentadaGastos.innerHTML = '';
+
+        datosAgrupadosSimulados.forEach((item) => {
+            const porcentaje = totalGastos > 0 ? Math.round((item.monto / totalGastos) * 100) : 0;
+            const montoFormateado = item.monto.toLocaleString('es-AR', { minimumFractionDigits: 2 });
+
+            //Inyectar segmento en la barra principal
+            const segmentoHTML = `<div class="h-full ${item.colorClass} transition-all duration-1000 ease-out" style="width: 0%;" data-target-width="${porcentaje}%"></div>`;
+            barraSegmentadaGastos.insertAdjacentHTML('beforeend', segmentoHTML);
+
+            //Inyectar barra individual detallada
+            const barraIndividualHTML = `
+                <div class="flex flex-col gap-2 group">
+                    <div class="flex justify-between items-end">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full ${item.iconBg} ${item.iconColor} flex items-center justify-center text-[10px]">
+                                <i class="fa-solid ${item.icon}"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">${item.categoria}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold text-slate-400">$ ${montoFormateado}</span>
+                            <span class="text-xs font-extrabold text-slate-800">${porcentaje}%</span>
+                        </div>
+                    </div>
+                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full ${item.colorClass} rounded-full transition-all duration-1000 ease-out" style="width: 0%;" data-target-width="${porcentaje}%"></div>
+                    </div>
+                </div>
+            `;
+            contenedorBarras.insertAdjacentHTML('beforeend', barraIndividualHTML);
+        });
+
+        // Animar anchos
+        setTimeout(() => {
+            document.querySelectorAll('#seccionAnalisisGastos [data-target-width]').forEach(barra => {
+                barra.style.width = barra.getAttribute('data-target-width');
+            });
+        }, 100);
+
+        // Lógica del acordeón
+        let expandido = false;
+        tarjetaAnalisisGastos.addEventListener('click', () => {
+            expandido = !expandido;
+            if (expandido) {
+                // Expandir
+                iconoAcordeonGastos.classList.add('rotate-180');
+                contenedorBarras.classList.remove('max-h-0', 'opacity-0', 'mt-0');
+                contenedorBarras.classList.add('max-h-[500px]', 'opacity-100', 'mt-4');
+                barraSegmentadaGastos.classList.add('hidden'); // Ocultar barra segmentada
+            } else {
+                // Contraer
+                iconoAcordeonGastos.classList.remove('rotate-180');
+                contenedorBarras.classList.add('max-h-0', 'opacity-0', 'mt-0');
+                contenedorBarras.classList.remove('max-h-[500px]', 'opacity-100', 'mt-4');
+                setTimeout(() => barraSegmentadaGastos.classList.remove('hidden'), 300);
+            }
+        });
+    };
+
+    renderizarAnalisisGastos();
+
+
+    // CARGAR SALDO (Depósito)
+
+    const btnAbrirDeposito = document.getElementById('btnAbrirDeposito');
+    const modalCargarSaldo = document.getElementById('modalCargarSaldo');
+    const modalCargarSaldoContent = document.getElementById('modalCargarSaldoContent');
+    const btnCerrarModalSaldo = document.getElementById('btnCerrarModalSaldo');
+    const inputMontoDeposito = document.getElementById('inputMontoDeposito');
+    const btnConfirmarDeposito = document.getElementById('btnConfirmarDeposito');
+    const pantallaExitoDeposito = document.getElementById('pantallaExitoDeposito');
+    const btnVolverExitoDeposito = document.getElementById('btnVolverExitoDeposito');
+    const lottieExitoDeposito = document.getElementById('lottieExitoDeposito');
+    const saldoTotalElement = document.getElementById('saldoTotal');
+
+    if (btnAbrirDeposito && modalCargarSaldo) {
+        
+        const cerrarModalSaldo = () => {
+            modalCargarSaldo.classList.add('opacity-0');
+            modalCargarSaldoContent.classList.add('translate-y-full');
+            setTimeout(() => {
+                modalCargarSaldo.classList.add('hidden');
+                inputMontoDeposito.value = '';
+                btnConfirmarDeposito.disabled = true;
+                btnConfirmarDeposito.classList.add('opacity-50', 'cursor-not-allowed');
+            }, 300);
+        };
+
+        btnAbrirDeposito.addEventListener('click', () => {
+            modalCargarSaldo.classList.remove('hidden');
+            setTimeout(() => {
+                modalCargarSaldo.classList.remove('opacity-0');
+                modalCargarSaldoContent.classList.remove('translate-y-full');
+                inputMontoDeposito.focus();
+            }, 10);
+        });
+
+        btnCerrarModalSaldo.addEventListener('click', cerrarModalSaldo);
+        modalCargarSaldo.addEventListener('click', (e) => {
+            if (e.target === modalCargarSaldo) cerrarModalSaldo();
+        });
+
+        // Validar input para habilitar botón
+        inputMontoDeposito.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            if (val > 0) {
+                btnConfirmarDeposito.disabled = false;
+                btnConfirmarDeposito.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                btnConfirmarDeposito.disabled = true;
+                btnConfirmarDeposito.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+        // Confirmar Depósito
+        btnConfirmarDeposito.addEventListener('click', () => {
+            const montoDepositado = parseFloat(inputMontoDeposito.value);
+            
+            btnConfirmarDeposito.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
+            
+            setTimeout(() => {
+                // Cerrar modal
+                cerrarModalSaldo();
+                btnConfirmarDeposito.innerHTML = `Confirmar Depósito`;
+
+                // Mostrar pantalla de éxito
+                pantallaExitoDeposito.classList.remove('hidden');
+                pantallaExitoDeposito.classList.add('flex');
+                setTimeout(() => {
+                    pantallaExitoDeposito.classList.remove('opacity-0');
+                }, 10);
+
+                // Cargar Lottie si no está
+                if (lottieExitoDeposito.innerHTML === '') {
+                    lottie.loadAnimation({
+                        container: lottieExitoDeposito, 
+                        renderer: 'svg',
+                        loop: false,
+                        autoplay: true,
+                        path: '../assets/lottie_success.json' 
+                    });
+                } else {
+                    lottie.destroy();
+                    lottie.loadAnimation({
+                        container: lottieExitoDeposito, 
+                        renderer: 'svg',
+                        loop: false,
+                        autoplay: true,
+                        path: '../assets/lottie_success.json' 
+                    });
+                }
+
+                // Actualizar Saldo Visual
+                const nuevoSaldo = 7850 + montoDepositado;
+                const saldoStr = nuevoSaldo.toLocaleString('es-AR', { minimumFractionDigits: 2 });
+                const [enteros, decimales] = saldoStr.split(',');
+                saldoTotalElement.innerHTML = `$ ${enteros}<span class="text-xl opacity-80" id="saldoDecimales">,${decimales}</span>`;
+
+            }, 1500);
+        });
+
+        btnVolverExitoDeposito.addEventListener('click', () => {
+            pantallaExitoDeposito.classList.add('opacity-0');
+            setTimeout(() => {
+                pantallaExitoDeposito.classList.add('hidden');
+                pantallaExitoDeposito.classList.remove('flex');
+            }, 300);
         });
     }
 
