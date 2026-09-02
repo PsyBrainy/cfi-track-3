@@ -1,5 +1,5 @@
 // ==========================================
-// INTEGRACI�N CON BACKEND (Desde develop)
+// INTEGRACIÓN CON BACKEND (Desde develop)
 // ==========================================
 // Se activa al cargar la pogina
 addEventListener("DOMContentLoaded", (event) => onInit(event));
@@ -102,14 +102,14 @@ function ocultarMensaje(elemento) {
 }
 
 // ==========================================
-// L�GICA DE UI (NUESTRA)
+// LÓGICA DE UI (NUESTRA)
 // ==========================================
 /**
- * Hola, hola! acá hay un ejemplo de cómo generar los componentes dinámicamente
+ * Hola, hola! acÃ¡ hay un ejemplo de cÃ³mo generar los componentes dinÃ¡micamente
  * cuando leas los datos desde el Backend
  *
- * Actualmente los datos están hardcodeados
- * para que podamos ver y ajustar el diseño.
+ * Actualmente los datos estÃ¡n hardcodeados
+ * para que podamos ver y ajustar el diseÃ±o.
  * Cuando conectes los datos reales, los borramos
  *
  * CONTACTOS RECIENTES
@@ -139,7 +139,7 @@ function ocultarMensaje(elemento) {
  *     const contenedor = document.getElementById('listaMovimientos');
  *     
  *     movimientosBD.forEach(mov => {
- *         // Pequeña lógica para diferenciar ingresos de egresos
+ *         // PequeÃ±a lÃ³gica para diferenciar ingresos de egresos
  *         const esIngreso = mov.monto > 0;
  *         const colorMonto = esIngreso ? 'text-blue-600' : 'text-slate-800';
  *         const signo = esIngreso ? '+' : '-';
@@ -148,7 +148,7 @@ function ocultarMensaje(elemento) {
  *         const movimientoHTML = `
  *             <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
  *                 <div class="flex items-center gap-3">
- *                     <!-- En un caso real, los colores e íconos dependerán de la categoría del movimiento -->
+ *                     <!-- En un caso real, los colores e Ã­conos dependerÃ¡n de la categorÃ­a del movimiento -->
  *                     <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-500 bg-slate-50">
  *                         <i class="${mov.iconoClase} text-sm"></i>
  *                     </div>
@@ -171,7 +171,7 @@ function ocultarMensaje(elemento) {
 document.addEventListener('DOMContentLoaded', () => {
     
 
-    // LÓGICA DEL MODAL NUEVA CUENTA
+    // LÃ“GICA DEL MODAL NUEVA CUENTA
 
     const btnNuevaCuenta = document.getElementById('btnNuevaCuentaDashboard');
     const modalNuevaCuenta = document.getElementById('modalNuevaCuenta');
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modalNuevaCuentaContent.classList.add('translate-y-full');
             setTimeout(() => {
                 modalNuevaCuenta.classList.add('hidden');
-            }, 300); // Esperar que termine la transición de CSS
+            }, 300); // Esperar que termine la transiciÃ³n de CSS
         };
 
         // Cerrar al tocar la cruz
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Lógica de Guardar Contacto
+        // LÃ³gica de Guardar Contacto
         btnGuardarModalCuenta.addEventListener('click', () => {
             const alias = document.getElementById('inputModalCbu').value;
             const nombre = document.getElementById('inputModalNombre').value;
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             btnGuardarModalCuenta.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando...`;
             
-            // Simular petición al backend
+            // Simular peticiÃ³n al backend
             setTimeout(() => {
                 btnGuardarModalCuenta.innerHTML = `Guardar Contacto`;
                 cerrarModal();
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    // ANÁLISIS DE GASTOS
+    // ANÃLISIS DE GASTOS
 
     const renderizarAnalisisGastos = () => {
         const contenedorBarras = document.getElementById('contenedorBarrasGastos');
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 100);
 
-        // Lógica del acordeón
+        // LÃ³gica del acordeÃ³n
         let expandido = false;
         tarjetaAnalisisGastos.addEventListener('click', () => {
             expandido = !expandido;
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderizarAnalisisGastos();
 
 
-    // CARGAR SALDO (Depósito)
+    // CARGAR SALDO (DepÃ³sito)
 
     const btnAbrirDeposito = document.getElementById('btnAbrirDeposito');
     const modalCargarSaldo = document.getElementById('modalCargarSaldo');
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === modalCargarSaldo) cerrarModalSaldo();
         });
 
-        // Validar input para habilitar botón
+        // Validar input para habilitar botÃ³n
         inputMontoDeposito.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             if (val > 0) {
@@ -379,16 +379,16 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(async () => {
                 // Cerrar modal
                 cerrarModalSaldo();
-                btnConfirmarDeposito.innerHTML = `Confirmar Depósito`;
+                btnConfirmarDeposito.innerHTML = `Confirmar DepÃ³sito`;
 
-                // Mostrar pantalla de éxito
+                // Mostrar pantalla de Ã©xito
                 pantallaExitoDeposito.classList.remove('hidden');
                 pantallaExitoDeposito.classList.add('flex');
                 setTimeout(() => {
                     pantallaExitoDeposito.classList.remove('opacity-0');
                 }, 10);
 
-                // Cargar Lottie si no está
+                // Cargar Lottie si no estÃ¡
                 if (lottieExitoDeposito.innerHTML === '') {
                     lottie.loadAnimation({
                         container: lottieExitoDeposito, 
