@@ -1,7 +1,9 @@
 package com.track3.alkywall.controllers;
 
-import com.track3.alkywall.config.ApiResponse;
+import com.track3.alkywall.config.DataApiResponse;
 import com.track3.alkywall.controllers.models.NewTransferRequest;
+import com.track3.alkywall.controllers.models.TransferResponse;
+import com.track3.alkywall.models.Transfer;
 import com.track3.alkywall.services.TransferService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/transfer")
+@RequestMapping("/api/transaction/transfer")
 public class TransferController {
     private final TransferService transferService;
 
@@ -22,18 +24,22 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createTransfer(
+    public ResponseEntity<DataApiResponse<TransferResponse>> createTransfer(
             Authentication authentication,
-            @RequestBody @Valid NewTransferRequest transfer
+            @RequestBody @Valid NewTransferRequest newTransfer
     ) {
-        transferService.createTransfer(
+        Transfer transfer = transferService.createTransfer(
                 authentication.getName(),
-                transfer.sourceAccountNumber(),
-                transfer.destinationAccount(),
-                transfer.amount(),
-                transfer.description()
+                newTransfer.sourceAccountNumber(),
+                newTransfer.destinationAccount(),
+                newTransfer.amount(),
+                newTransfer.description()
         );
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, "Transferencia enviada"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DataApiResponse<>(
+                true,
+                "Transferencia enviada",
+                TransferResponse.from(transfer)
+        ));
     }
 }

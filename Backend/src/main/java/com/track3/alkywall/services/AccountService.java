@@ -1,11 +1,14 @@
 package com.track3.alkywall.services;
 
+import com.track3.alkywall.config.exceptions.AccountNotOwnedByUserException;
 import com.track3.alkywall.config.exceptions.AlreadyExistsException;
+import com.track3.alkywall.config.exceptions.InvalidTransferException;
 import com.track3.alkywall.config.exceptions.NotFoundException;
 import com.track3.alkywall.controllers.models.AccountDTO;
 import com.track3.alkywall.models.Account;
 import com.track3.alkywall.models.User;
 import com.track3.alkywall.repositories.AccountRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +17,7 @@ import java.security.SecureRandom;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class AccountService {
     private final AccountRepository accountRepository;
     private final SecureRandom random;
@@ -72,7 +76,17 @@ public class AccountService {
         return String.format("%022d", id);
     }
 
-    public boolean accountExistsByAccountNumberAndEmail(String accountNumber, String email){
-        return accountRepository.existsByAccountNumberAndUserEmail(accountNumber, email);
+    @Transactional
+    public void updateAccountBalance(Long accountId, BigDecimal balance){
+        accountRepository.updateBalanceById(accountId, balance);
+    }
+
+    public Account getAccountByAccountNumberOrAlias(String accountIdentifier) throws NotFoundException {
+        return accountRepository.findByAccountNumberOrAlias(accountIdentifier).orElseThrow(
+                () -> {
+                    log.error("Cuenta={} no encontrada", accountIdentifier);
+                    return new NotFoundException("La cuenta no existe");
+                }
+        );
     }
 }

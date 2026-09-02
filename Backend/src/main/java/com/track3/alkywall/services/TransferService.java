@@ -1,6 +1,8 @@
 package com.track3.alkywall.services;
 
+import com.track3.alkywall.config.exceptions.AccountNotOwnedByUserException;
 import com.track3.alkywall.config.exceptions.InvalidTransferException;
+import com.track3.alkywall.models.Account;
 import com.track3.alkywall.models.Transaction;
 import com.track3.alkywall.models.Transfer;
 import com.track3.alkywall.repositories.TransferRepository;
@@ -24,23 +26,27 @@ public class TransferService {
     }
 
     @Transactional
-    public void createTransfer(String emailUserAuthenticated, String sourceAccountNumber, String destinationAccount, BigDecimal amount, String description) {
-        log.info("Creando transferencia de cuentaOrigen={} a cuentaDestino={}", sourceAccountNumber, destinationAccount);
+    public Transfer createTransfer(String emailUserAuthenticated, String sourceAccountNumber, String destinationAccountIdentifier, BigDecimal amount, String description) {
+        log.info("Creando transferencia de cuentaOrigen={} a cuentaDestino={}", sourceAccountNumber, destinationAccountIdentifier);
 
-        if(sourceAccountNumber.equals(destinationAccount)){
+        Account sourceAccount = accountService.getAccountByAccountNumberOrAlias(sourceAccountNumber);
+
+        if(!sourceAccount.getUser().getEmail().equals(emailUserAuthenticated)) {
+            log.error("Número de cuenta={} no asociado al usuario={}", sourceAccountNumber, emailUserAuthenticated);
+            throw new AccountNotOwnedByUserException("El número de cuenta no está asociado con el usuario");
+        }
+
+        Account destinationAccount  = accountService.getAccountByAccountNumberOrAlias(destinationAccountIdentifier);
+
+        if(sourceAccount.getId().equals(destinationAccount.getId())) {
             log.error("Transferencia a misma cuenta");
             throw new InvalidTransferException("No se puede transferir a la misma cuenta");
         }
 
-        if(!accountService.accountExistsByAccountNumberAndEmail(sourceAccountNumber, emailUserAuthenticated)){
-            log.error("Transferencia desde número de cuenta no asociado al usuario");
-            throw new InvalidTransferException("El número de cuenta origen no está asociado con el usuario");
-        }
-
-        Transaction sourceTransaction = transactionService.createTransaction(sourceAccountNumber, amount, "DEBIT", description, "TRANSFER");
+        Transaction sourceTransaction = transactionService.createTransaction(sourceAccount, amount, "DEBIT", description, "TRANSFER");
 
         Transaction destinationTransaction = transactionService.createTransaction(destinationAccount, amount, "CREDIT", description, "TRANSFER");
 
-        transferRepository.save(new Transfer(sourceTransaction, destinationTransaction));
+        return transferRepository.save(new Transfer(sourceTransaction, destinationTransaction));
     }
 }

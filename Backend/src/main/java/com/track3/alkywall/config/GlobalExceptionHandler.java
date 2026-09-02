@@ -60,4 +60,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> insufficientFundsException(InsufficientFundsException exception){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(false, exception.getMessage()));
     }
+
+    @ExceptionHandler(AccountNotOwnedByUserException.class)
+    public ResponseEntity<ApiResponse> accountNotOwnedByUserException(AccountNotOwnedByUserException exception){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponse(false, exception.getMessage()));
+    }
 }

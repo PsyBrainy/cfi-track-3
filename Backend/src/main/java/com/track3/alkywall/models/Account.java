@@ -27,7 +27,7 @@ public class Account {
     @Column(nullable = false, length = 3)
     private String currency;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

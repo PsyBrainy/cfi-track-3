@@ -21,6 +21,4 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("select a from Account a where a.accountNumber = ?1 or a.alias = ?1")
     Optional<Account> findByAccountNumberOrAlias(String identifier);
-
-    boolean existsByAccountNumberAndUserEmail(String accountNumber, String userEmail);
 }
