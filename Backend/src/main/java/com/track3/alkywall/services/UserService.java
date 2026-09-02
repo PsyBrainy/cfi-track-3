@@ -34,6 +34,14 @@ public class UserService {
         return DomainUser.from(user);
     }
 
+    public DomainUser getUserByEmail(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundException("El usuario no existe")
+        );
+
+        return DomainUser.from(user);
+    }
+
     @Transactional
     public void update(DomainUser newUser){
         User user = userRepository.findById(newUser.id()).orElseThrow(

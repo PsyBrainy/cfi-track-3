@@ -8,6 +8,7 @@ import com.track3.alkywall.services.UserService;
 import com.track3.alkywall.services.models.DomainUser;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,17 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<DataApiResponse<UserResponse>> getUserById(@PathVariable Long id){
         DomainUser user = userService.getUserById(id);
+
+        return ResponseEntity.ok(new DataApiResponse<>(
+                true,
+                null,
+                UserResponse.from(user)
+        ));
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<DataApiResponse<UserResponse>> getUserAuthenticated(Authentication authentication){
+        DomainUser user = userService.getUserByEmail(authentication.getName());
 
         return ResponseEntity.ok(new DataApiResponse<>(
                 true,

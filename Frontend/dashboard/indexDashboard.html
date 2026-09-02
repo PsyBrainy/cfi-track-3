@@ -9,7 +9,7 @@
     <style>
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        /* Animación de pantalla */
+        /* AnimaciÃ³n de pantalla */
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
@@ -23,7 +23,7 @@
         <div class="fade-in flex flex-col h-full">
         <!-- Cabecera de la pantalla -->
         <header class="relative flex justify-between items-center pt-2 pb-2">
-            <!-- Botón Menú con ID para JS -->
+            <!-- BotÃ³n MenÃº con ID para JS -->
             <button id="open-menu-btn" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
                 <i class="fa-solid fa-bars"></i>
             </button>
@@ -34,15 +34,15 @@
                 <span class="text-slate-900 text-lg font-extrabold font-['Plus_Jakarta_Sans',sans-serif]">Alky<span class="text-blue-600">Wall</span></span>
             </div>
             
-            <!-- Botón Notificaciones -->
+            <!-- BotÃ³n Notificaciones -->
             <a href="../notificaciones/indexNotificaciones.html" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition cursor-pointer page-transition relative" title="Notificaciones">
                 <i class="fa-regular fa-bell"></i>
-                <!-- Badge de notificaciones no leídas -->
+                <!-- Badge de notificaciones no leÃ­das -->
                 <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white box-content"></span>
             </a>
         </header>
 
-        <!-- Barra de Búsqueda -->
+        <!-- Barra de BÃºsqueda -->
         <section class="relative mt-6 flex gap-3">
             <div class="flex-1 bg-white border border-slate-200 rounded-xl flex items-center px-4 shadow-sm">
                 <input type="text" placeholder="Buscar contactos, CVU..." class="bg-transparent text-[11px] text-slate-600 w-full placeholder-slate-400 focus:outline-none py-3.5">
@@ -75,14 +75,14 @@
                 <a href="../contactos/indexContactos.html" class="text-[10px] text-blue-600 font-bold hover:text-blue-700 transition page-transition">Ver todos</a>
             </div>
 
-            <!--leer archivo srcDashboard.js para implementación-->
+            <!--leer archivo srcDashboard.js para implementaciÃ³n-->
             <div id="listaContactos" class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6">
-                <!-- Botón de Nueva Cuenta (Abre Modal) -->
+                <!-- BotÃ³n de Nueva Cuenta (Abre Modal) -->
                 <button id="btnNuevaCuentaDashboard" class="min-w-[76px] h-[92px] rounded-[20px] border-2 border-dashed border-slate-300 bg-slate-50 flex flex-col items-center justify-center gap-2 hover:bg-slate-100 transition">
                     <i class="fa-solid fa-plus text-blue-600 text-lg"></i>
                     <span class="text-[10px] text-slate-500 text-center leading-tight font-semibold">Nueva<br>Cuenta</span>
                 </button>
-                <!-- Contactos Rápidos (Van directo a Paso 2 de transferencia) -->
+                <!-- Contactos RÃ¡pidos (Van directo a Paso 2 de transferencia) -->
                 <a href="../transferencia/indexTransferencia.html?alias=franco.alkywall&nombre=Franco%20C." class="min-w-[76px] h-[92px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
                     <div class="w-[38px] h-[38px] rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">FC</div>
                     <span class="text-[10px] text-slate-600 font-semibold">Franco C.</span>
@@ -108,7 +108,7 @@
                     <i class="fa-regular fa-calendar text-blue-600/70"></i> Historial
                 </a>
             </div>
-            <!--leer archivo srcDashboard.js para implementación-->
+            <!--leer archivo srcDashboard.js para implementaciÃ³n-->
             <div id="listaMovimientos" class="flex-1 overflow-y-auto scrollbar-hide pb-6 flex flex-col gap-3 -mx-2 px-2">
                 <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
                     <div class="flex items-center gap-3">
@@ -156,7 +156,7 @@
         </section>
         </div>
     
-    <!-- MODAL NUEVA CUENTA (Añadir a Agenda)       -->
+    <!-- MODAL NUEVA CUENTA (AÃ±adir a Agenda)       -->
 
     <div id="modalNuevaCuenta" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white w-full md:max-w-[380px] rounded-t-[32px] p-6 shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col" id="modalNuevaCuentaContent">
@@ -174,7 +174,7 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block pl-1">Nombre para agendar</label>
-                    <input type="text" id="inputModalNombre" placeholder="Ej: Mecánico Juan" class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                    <input type="text" id="inputModalNombre" placeholder="Ej: MecÃ¡nico Juan" class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 focus:bg-white transition-colors">
                 </div>
             </div>
 
@@ -195,7 +195,7 @@
             </div>
             
             <div class="flex flex-col items-center justify-center mb-8 mt-2">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">�Cu�nto quieres depositar?</span>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">¿Cuánto quieres depositar?</span>
                 <div class="flex items-center justify-center w-full relative">
                     <span class="text-3xl font-bold text-slate-400 absolute left-8 top-1/2 -translate-y-1/2">$</span>
                     <input type="number" id="inputMontoDeposito" placeholder="0.00" min="1" step="0.01" class="all-unset w-full text-center text-4xl font-extrabold text-slate-900 bg-transparent outline-none placeholder-slate-300 focus:ring-0 border-none" style="-moz-appearance: textfield;">
@@ -203,16 +203,16 @@
             </div>
 
             <button id="btnConfirmarDeposito" class="w-full h-14 bg-blue-600 text-white rounded-2xl font-bold text-base hover:bg-blue-700 transition shadow-[0_8px_20px_rgba(37,99,235,0.4)] opacity-50 cursor-not-allowed" disabled>
-                Confirmar Dep�sito
+                Confirmar Depósito
             </button>
         </div>
     </div>
 
-    <!-- PANTALLA �XITO DEP�SITO -->
+    <!-- PANTALLA ÉXITO DEPÓSITO -->
     <div id="pantallaExitoDeposito" class="absolute inset-0 bg-white z-[70] hidden flex-col items-center justify-center px-6 pb-20 opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
         <div id="lottieExitoDeposito" class="w-64 h-64"></div>
-        <h2 class="text-2xl font-extrabold text-slate-900 mt-4 text-center">�Dep�sito exitoso!</h2>
-        <p class="text-sm font-medium text-slate-500 mt-2 text-center">El dinero ya est� acreditado en tu cuenta.</p>
+        <h2 class="text-2xl font-extrabold text-slate-900 mt-4 text-center">¡Depósito exitoso!</h2>
+        <p class="text-sm font-medium text-slate-500 mt-2 text-center">El dinero ya está acreditado en tu cuenta.</p>
         <button id="btnVolverExitoDeposito" class="mt-10 w-full h-14 bg-slate-100 text-blue-600 rounded-[20px] font-extrabold text-base transition hover:bg-slate-200 flex items-center justify-center gap-2">
             Volver al inicio
         </button>
