@@ -67,7 +67,12 @@ public class UserService {
     }
 
     @Transactional
+    public void toggleIsActive(Long id){
+        userRepository.toggleIsActiveById(id);
+    }
+
+    @Transactional
     public void delete(Long id){
-        userRepository.updateIsActiveById(id, false);
+        userRepository.deleteById(id);
     }
 }

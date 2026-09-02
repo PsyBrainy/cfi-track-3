@@ -21,6 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<String> findPasswordByEmail(String email);
 
     @Modifying
-    @Query("update User u set u.isActive = ?2 where u.id = ?1")
-    void updateIsActiveById(Long id, boolean active);
+    @Query("UPDATE User u SET u.isActive = NOT u.isActive WHERE u.id = ?1")
+    void toggleIsActiveById(Long id);
+
+    void deleteById(Long id);
 }

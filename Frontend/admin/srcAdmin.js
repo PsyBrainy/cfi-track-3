@@ -21,7 +21,7 @@ const getAllUsers = async () => {
     if (!axiosInstance) return null;
     try {
         const response = await axiosInstance.get("/user");
-        return response.data;
+        return response.data.data;
     }
     catch (error) {
         console.error(error);
@@ -45,6 +45,20 @@ const deleteUser = async (id) => {
         return null;
     }
 }
+const toggleBlock = async (id) => {
+    if (!axiosInstance) return null;
+    try {
+        const response = await axiosInstance.post("/user/block/" + id);
+        return response.status == 201 || response.status == 200;
+    }
+    catch (error) {
+        console.error(error);
+        if (error.status == 401 || error.status == 403) {
+            window.location.href = "../login/indexLogin.html"
+        }
+        return null;
+    }
+}
 const editUser = async (id, userUpdateRequest) => {
     if (!axiosInstance) return null;
     try {
@@ -53,8 +67,8 @@ const editUser = async (id, userUpdateRequest) => {
     }
     catch (error) {
         console.error(error);
-        if (error.status == 401) {
-            // window.location.href = "../login/indexLogin.html"
+        if (error.status == 401 || error.status == 403) {
+            window.location.href = "../login/indexLogin.html"
         }
         return null;
     }
@@ -71,8 +85,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     //     { id: 4, firstName: "María", lastName: "Gómez", dni: "37555444", cvu: "0000003100044455566604", rol: "usuario", estado: "activo" },
     //     { id: 5, firstName: "Esteban", lastName: "Quito", dni: "33222111", cvu: "0000003100077788899905", rol: "usuario", estado: "activo" }
     // ];
-    let usuariosBD = (await getAllUsers()).data;
-    console.log(usuariosBD);
+    let usuariosBD = await getAllUsers();
+
     const listaUsuariosContenedor = document.getElementById('listaUsuarios');
     const inputBuscarUsuario = document.getElementById('inputBuscarUsuario');
     const msgVacio = document.getElementById('msgVacio');
@@ -85,6 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // RENDERIZADO DE LA LISTA
 
     const renderizarUsuarios = (filtroTexto = '') => {
+
         if (!listaUsuariosContenedor || !msgVacio) return;
 
         listaUsuariosContenedor.innerHTML = '';
@@ -94,7 +109,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             u.firstName.toLowerCase().includes(textoBusqueda) ||
             u.lastName.toLowerCase().includes(textoBusqueda) ||
             u.dni.includes(textoBusqueda)
-            // u.cvu.includes(textoBusqueda)
         );
 
         if (usuariosFiltrados.length === 0) {
@@ -111,7 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Clases dinámicas según estado y rol
                 const esAdmin = u.role === 'ADMIN';
-                const esBloqueado = !u.isActive === 'bloqueado';
+                const esBloqueado = u.isActive == false;
 
                 const badgeRol = esAdmin
                     ? '<span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px] font-extrabold uppercase tracking-wide">Admin</span>'
@@ -240,36 +254,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // Ejecutar la acción
-        btnConfirmarAccion.addEventListener('click', () => {
+        btnConfirmarAccion.addEventListener('click', async () => {
             btnConfirmarAccion.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
-            // Simular petición al backend
-            setTimeout(() => {
+            // Petición al backend
+            if (accionPendiente === 'eliminar') {
+                exito = await deleteUser(usuarioSeleccionado.id);
+                usuariosBD = usuariosBD.filter(u => u.id !== usuarioSeleccionado.id);
+            } else if (accionPendiente === 'bloquear') {
+                exito = await toggleBlock(usuarioSeleccionado.id);
+                const idx = usuariosBD.findIndex(u => u.id === usuarioSeleccionado.id);
+                usuariosBD[idx].isActive = false;
+            } else if (accionPendiente === 'desbloquear') {
+                exito = await toggleBlock(usuarioSeleccionado.id);
+                const idx = usuariosBD.findIndex(u => u.id === usuarioSeleccionado.id);
+                usuariosBD[idx].isActive = true;
+            } 
+
+            renderizarUsuarios(inputBuscarUsuario.value);
+            cerrarModal();
+            btnConfirmarAccion.innerHTML = 'Confirmar';
+
+
+            // Disparar Notificación Toast
+            if (exito) {
                 if (accionPendiente === 'eliminar') {
-                    exito = deleteUser(usuarioSeleccionado.id);
+                    mostrarNotificacion("Usuario eliminado permanentemente.", "eliminar");
                 } else if (accionPendiente === 'bloquear') {
-                    exito = blockUser(usuarioSeleccionado.id);
+                    mostrarNotificacion("Usuario bloqueado con éxito.", "bloquear");
                 } else if (accionPendiente === 'desbloquear') {
-                    exito = unblockUser(usuarioSeleccionado.id);
+                    mostrarNotificacion("Usuario desbloqueado.", "exito");
                 }
-
-                // Refrescar lista manteniendo el texto de búsqueda actual
-                renderizarUsuarios(inputBuscarUsuario.value);
-                cerrarModal();
-                btnConfirmarAccion.innerHTML = 'Confirmar';
-
-
-                // Disparar Notificación Toast
-                if (exito) {
-                    if (accionPendiente === 'eliminar') {
-                        mostrarNotificacion("Usuario eliminado permanentemente.", "eliminar");
-                    } else if (accionPendiente === 'bloquear') {
-                        mostrarNotificacion("Usuario bloqueado con éxito.", "bloquear");
-                    } else if (accionPendiente === 'desbloquear') {
-                        mostrarNotificacion("Usuario desbloqueado.", "exito");
-                    }
-                } else mostrarNotificacion("No se pudo completar la acción")
-            }, 600);
+            } else mostrarNotificacion("No se pudo completar la acción")
         });
     }
 
@@ -321,32 +337,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // Guardar Edición
-        btnGuardarEdicion.addEventListener('click', () => {
+        btnGuardarEdicion.addEventListener('click', async () => {
             btnGuardarEdicion.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
-            // Simular petición al backend
-            setTimeout(async () => {
-                
-                // Actualizar array
-                const userUpdateRequest = new UserUpdateRequest(
-                    inputEditNombre.value.trim(),
-                    inputEditlastName.value.trim(),
-                    inputEditEmail.value,
-                    inputEditDni.value.trim(),
-                    selectEditRol.value,
-                    usuarioSeleccionado.isActive
-                );
-                console.log(userUpdateRequest);
-                exito = await editUser(usuarioSeleccionado.id, userUpdateRequest);
-                renderizarUsuarios(inputBuscarUsuario.value);
-                cerrarModalEditar();
-                btnGuardarEdicion.innerHTML = 'Guardar Cambios';
+            // Petición al backend
+            const userUpdateRequest = new UserUpdateRequest(
+                inputEditNombre.value.trim(),
+                inputEditlastName.value.trim(),
+                inputEditEmail.value,
+                inputEditDni.value.trim(),
+                selectEditRol.value,
+                usuarioSeleccionado.isActive
+            );
+            exito = await editUser(usuarioSeleccionado.id, userUpdateRequest);
 
-                // Mostrar notificación de éxito
-                if (exito){
-                    mostrarNotificacion("Usuario editado correctamente.", "exito");
-                } else mostrarNotificacion("No se pudieron editar los datos del usuario");
-            }, 800);
+            // Actualizar array
+            const idx = usuariosBD.findIndex(u => u.id === usuarioSeleccionado.id);
+            usuariosBD[idx].nombre = inputEditNombre.value.trim();
+            usuariosBD[idx].apellido = inputEditlastName.value.trim();
+            usuariosBD[idx].dni = inputEditDni.value.trim();
+            usuariosBD[idx].email = inputEditEmail.value;
+            usuariosBD[idx].role = selectEditRol.value;
+            renderizarUsuarios(inputBuscarUsuario.value);
+            cerrarModalEditar();
+            btnGuardarEdicion.innerHTML = 'Guardar Cambios';
+
+            // Mostrar notificación de éxito
+            if (exito) {
+                mostrarNotificacion("Usuario editado correctamente.", "exito");
+            } else mostrarNotificacion("No se pudieron editar los datos del usuario");
         });
     }
 
