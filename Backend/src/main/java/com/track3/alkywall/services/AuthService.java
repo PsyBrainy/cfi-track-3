@@ -17,18 +17,20 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final AccountService accountService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository){
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, AccountService accountService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.accountService = accountService;
     }
 
     @Transactional
     public void registerUser(String firstName, String lastName, String email, String password, String dni){
         if(userRepository.existsByEmailOrDni(email, dni)) throw new AlreadyExistsException("El usuario ya existe");
 
-        userRepository.save(new User(
+        User user = userRepository.save(new User(
                 firstName,
                 lastName,
                 email,
@@ -36,6 +38,8 @@ public class AuthService {
                 dni,
                 roleRepository.findByName("USER").orElseThrow(() -> new NotFoundException("El rol no existe"))
         ));
+
+        accountService.createAccount(user, "ARS");
     }
 
     public void loginUser(String email, String loginPassword){

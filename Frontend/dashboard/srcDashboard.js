@@ -1,5 +1,5 @@
 // ==========================================
-// INTEGRACI�N CON BACKEND (Desde develop)
+// INTEGRACIÓN CON BACKEND (Desde develop)
 // ==========================================
 // Se activa al cargar la pogina
 addEventListener("DOMContentLoaded", (event) => onInit(event));
@@ -102,7 +102,7 @@ function ocultarMensaje(elemento) {
 }
 
 // ==========================================
-// L�GICA DE UI (NUESTRA)
+// LÓGICA DE UI (NUESTRA)
 // ==========================================
 /**
  * Hola, hola! acá hay un ejemplo de cómo generar los componentes dinámicamente

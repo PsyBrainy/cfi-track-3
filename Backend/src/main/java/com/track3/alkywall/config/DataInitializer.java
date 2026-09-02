@@ -1,11 +1,11 @@
 package com.track3.alkywall.config;
 
-import com.track3.alkywall.config.exceptions.NotFoundException;
+import com.track3.alkywall.models.Category;
 import com.track3.alkywall.models.Role;
 import com.track3.alkywall.models.User;
+import com.track3.alkywall.repositories.CategoryRepository;
 import com.track3.alkywall.repositories.RoleRepository;
 import com.track3.alkywall.repositories.UserRepository;
-import com.track3.alkywall.services.AuthService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class DataInitializer {
     @Bean
-    public CommandLineRunner initRolesAndCategories(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public CommandLineRunner initRolesAndCategories(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, CategoryRepository categoryRepository) {
         return args -> {
             if(roleRepository.count() == 0){
                 roleRepository.save(new Role("ADMIN"));
@@ -31,6 +31,12 @@ public class DataInitializer {
                         "",
                         roleRepository.findByName("ADMIN").get()
                 ));
+            }
+
+            if(categoryRepository.count() == 0){
+                categoryRepository.save(new Category("DEPOSIT"));
+                categoryRepository.save(new Category("TRANSFER"));
+                categoryRepository.save(new Category("PAYMENT"));
             }
         };
     }
