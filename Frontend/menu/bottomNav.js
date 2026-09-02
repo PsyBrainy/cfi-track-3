@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const bottomNavHTML = `
         <!-- Botonera Inferior Flotante -->
-        <nav class="absolute bottom-0 left-0 w-full bg-white rounded-b-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-6 pt-4 px-2 z-40 border-t border-slate-100">
+        <nav class="absolute bottom-0 left-0 w-full bg-white md:rounded-b-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-6 pt-4 px-2 z-40 border-t border-slate-100">
             <ul class="flex justify-between items-end relative">
                 <!-- Inicio -->
                 <li class="flex-1 flex justify-center">
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </nav>
 
         <!-- Action Sheet QR -->
-        <div id="modalMenuQR" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-end justify-center hidden opacity-0 transition-opacity duration-300 rounded-[32px] overflow-hidden">
+        <div id="modalMenuQR" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-end justify-center hidden opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
             <div id="modalMenuQRContent" class="bg-white w-full rounded-t-[32px] p-6 pb-10 shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col gap-4 relative">
                 <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2"></div>
                 <h3 class="text-lg font-extrabold text-slate-900 text-center mb-2">¿Qué deseas hacer?</h3>
