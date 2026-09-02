@@ -34,7 +34,6 @@ public class TransactionController {
     @PostMapping("/deposito")
     public ResponseEntity<?> realizarDeposito(Authentication authentication, @RequestParam BigDecimal amount){
         if(authentication!=null) {
-            log.info("Authentication name: ", authentication.getName());
             TransactionDTO transactionDTO = transactionService.realizarDeposito(
                     accountService.getAccountByUserEmail(authentication.getName()), amount);
             return ResponseEntity.ok().body(transactionDTO);

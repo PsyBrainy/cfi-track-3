@@ -106,6 +106,10 @@
                         <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Apellido</label>
                         <input type="text" id="inputEditApellido" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl px-4 py-3 mt-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
                     </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Email</label>
+                        <input type="email" id="inputEditEmail" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl px-4 py-3 mt-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                    </div>
                     <div class="flex gap-3">
                         <div class="flex-1">
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">DNI</label>
@@ -114,8 +118,8 @@
                         <div class="flex-1 relative">
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Rol</label>
                             <select id="selectEditRol" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl px-4 py-3 mt-1 focus:outline-none focus:border-blue-500 transition appearance-none">
-                                <option value="usuario">Usuario</option>
-                                <option value="admin">Administrador</option>
+                                <option value="USER">Usuario</option>
+                                <option value="ADMIN">Administrador</option>
                             </select>
                             <i class="fa-solid fa-chevron-down absolute right-4 top-10 text-slate-400 pointer-events-none text-xs"></i>
                         </div>
@@ -137,7 +141,8 @@
         </div>
 
     </main>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../fx.js"></script>
     <script src="srcAdmin.js"></script>
 </body>
