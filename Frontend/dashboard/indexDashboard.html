@@ -42,15 +42,7 @@
             </a>
         </header>
 
-        <!-- Barra de BÃºsqueda -->
-        <section class="relative mt-6 flex gap-3">
-            <div class="flex-1 bg-white border border-slate-200 rounded-xl flex items-center px-4 shadow-sm">
-                <input type="text" placeholder="Buscar contactos, CVU..." class="bg-transparent text-[11px] text-slate-600 w-full placeholder-slate-400 focus:outline-none py-3.5">
-            </div>
-            <button class="w-[46px] h-[46px] bg-blue-600 rounded-xl flex items-center justify-center text-white hover:bg-blue-700 transition shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] flex-shrink-0">
-                <i class="fa-solid fa-magnifying-glass text-sm"></i>
-            </button>
-        </section>
+        
 
         <!-- Tarjeta de Saldo -->
         <section class="relative mt-6 p-6 rounded-[24px] bg-gradient-to-br from-blue-600 to-blue-400 text-white shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] overflow-hidden">
@@ -61,9 +53,7 @@
             <h1 id="saldoTotal" class="text-[34px] font-bold mt-1 tracking-tight">
                 $ 7.850<span class="text-xl opacity-80">,00</span>
             </h1>
-            <div class="absolute top-6 right-6 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-white text-[10px] shadow-sm backdrop-blur-sm">
-                <i class="fa-solid fa-check"></i>
-            </div>
+            <button id="btnAbrirDeposito" class="absolute top-6 right-6 h-8 px-3 bg-white/20 rounded-full flex items-center justify-center gap-1.5 text-white text-[11px] font-bold shadow-sm backdrop-blur-sm hover:bg-white/30 transition cursor-pointer"><i class="fa-solid fa-plus"></i> Ingresar</button>
         </section>
 
         <!-- Enviar Dinero A -->
@@ -77,24 +67,44 @@
 
             <!--leer archivo srcDashboard.js para implementaciÃ³n-->
             <div id="listaContactos" class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6">
-                <!-- BotÃ³n de Nueva Cuenta (Abre Modal) -->
-                <button id="btnNuevaCuentaDashboard" class="min-w-[76px] h-[92px] rounded-[20px] border-2 border-dashed border-slate-300 bg-slate-50 flex flex-col items-center justify-center gap-2 hover:bg-slate-100 transition">
+                <!-- BotÃ³n de Nueva Cuenta -->
+                <button id="btnNuevaCuentaDashboard" class="min-w-[64px] h-[80px] rounded-[20px] border-2 border-dashed border-slate-300 bg-slate-50 flex flex-col items-center justify-center gap-2 hover:bg-slate-100 transition">
                     <i class="fa-solid fa-plus text-blue-600 text-lg"></i>
                     <span class="text-[10px] text-slate-500 text-center leading-tight font-semibold">Nueva<br>Cuenta</span>
                 </button>
-                <!-- Contactos RÃ¡pidos (Van directo a Paso 2 de transferencia) -->
-                <a href="../transferencia/indexTransferencia.html?alias=franco.alkywall&nombre=Franco%20C." class="min-w-[76px] h-[92px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
-                    <div class="w-[38px] h-[38px] rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">FC</div>
+                <!-- Contactos RÃ¡pidos -->
+                <a href="../transferencia/indexTransferencia.html?alias=franco.alkywall&nombre=Franco%20C." class="min-w-[64px] h-[80px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
+                    <div class="w-[32px] h-[32px] rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">FC</div>
                     <span class="text-[10px] text-slate-600 font-semibold">Franco C.</span>
                 </a>
-                <a href="../transferencia/indexTransferencia.html?alias=xavier.alkywall&nombre=Xavier." class="min-w-[76px] h-[92px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
-                    <div class="w-[38px] h-[38px] rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">X</div>
+                <a href="../transferencia/indexTransferencia.html?alias=xavier.alkywall&nombre=Xavier." class="min-w-[64px] h-[80px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
+                    <div class="w-[32px] h-[32px] rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">X</div>
                     <span class="text-[10px] text-slate-600 font-semibold">Xavier.</span>
                 </a>
-                <a href="../transferencia/indexTransferencia.html?alias=jonatan.alkywall&nombre=Jonatan" class="min-w-[76px] h-[92px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
-                    <div class="w-[38px] h-[38px] rounded-full bg-orange-100 text-orange-500 flex items-center justify-center font-bold text-xs shadow-inner">J</div>
+                <a href="../transferencia/indexTransferencia.html?alias=jonatan.alkywall&nombre=Jonatan" class="min-w-[64px] h-[80px] rounded-[20px] bg-white border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 hover:bg-slate-50 transition page-transition">
+                    <div class="w-[32px] h-[32px] rounded-full bg-orange-100 text-orange-500 flex items-center justify-center font-bold text-xs shadow-inner">J</div>
                     <span class="text-[10px] text-slate-600 font-semibold">Jonatan</span>
                 </a>
+            </div>
+        </section>
+
+                <section id="seccionAnalisisGastos" class="relative mt-6">
+            <div id="tarjetaAnalisisGastos" class="bg-white border border-slate-200 rounded-[24px] shadow-sm overflow-hidden transition-all duration-300 cursor-pointer">
+                <div class="w-full p-5 flex flex-col gap-3 hover:bg-slate-50 transition relative">
+                    <div class="flex justify-between items-center w-full">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                GASTOS DEL MES
+                            </h3>
+                            <i id="iconoAcordeonGastos" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-300"></i>
+                        </div>
+                        <span id="textoTotalGastos" class="text-xs font-bold text-slate-800">$ 0,00</span>
+                    </div>
+                    <div id="barraSegmentadaGastos" class="w-full h-2.5 flex rounded-full overflow-hidden bg-slate-100 transition-opacity duration-300">
+                    </div>
+                </div>
+                <div id="contenedorBarrasGastos" class="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out px-5 pb-5 mt-0 flex flex-col gap-4">
+                </div>
             </div>
         </section>
 
@@ -195,7 +205,7 @@
             </div>
             
             <div class="flex flex-col items-center justify-center mb-8 mt-2">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">¿Cuánto quieres depositar?</span>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Â¿CuÃ¡nto quieres depositar?</span>
                 <div class="flex items-center justify-center w-full relative">
                     <span class="text-3xl font-bold text-slate-400 absolute left-8 top-1/2 -translate-y-1/2">$</span>
                     <input type="number" id="inputMontoDeposito" placeholder="0.00" min="1" step="0.01" class="all-unset w-full text-center text-4xl font-extrabold text-slate-900 bg-transparent outline-none placeholder-slate-300 focus:ring-0 border-none" style="-moz-appearance: textfield;">
@@ -203,16 +213,16 @@
             </div>
 
             <button id="btnConfirmarDeposito" class="w-full h-14 bg-blue-600 text-white rounded-2xl font-bold text-base hover:bg-blue-700 transition shadow-[0_8px_20px_rgba(37,99,235,0.4)] opacity-50 cursor-not-allowed" disabled>
-                Confirmar Depósito
+                Confirmar DepÃ³sito
             </button>
         </div>
     </div>
 
-    <!-- PANTALLA ÉXITO DEPÓSITO -->
+    <!-- PANTALLA Ã‰XITO DEPSITO -->
     <div id="pantallaExitoDeposito" class="absolute inset-0 bg-white z-[70] hidden flex-col items-center justify-center px-6 pb-20 opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
         <div id="lottieExitoDeposito" class="w-64 h-64"></div>
-        <h2 class="text-2xl font-extrabold text-slate-900 mt-4 text-center">¡Depósito exitoso!</h2>
-        <p class="text-sm font-medium text-slate-500 mt-2 text-center">El dinero ya está acreditado en tu cuenta.</p>
+        <h2 class="text-2xl font-extrabold text-slate-900 mt-4 text-center">DepÃ³sito exitoso!</h2>
+        <p class="text-sm font-medium text-slate-500 mt-2 text-center">El dinero ya estÃ¡ acreditado en tu cuenta.</p>
         <button id="btnVolverExitoDeposito" class="mt-10 w-full h-14 bg-slate-100 text-blue-600 rounded-[20px] font-extrabold text-base transition hover:bg-slate-200 flex items-center justify-center gap-2">
             Volver al inicio
         </button>

@@ -1,5 +1,5 @@
 // ==========================================
-// INTEGRACI�N CON BACKEND (Desde develop)
+// INTEGRACI�N CON BACKEND (Desde develop)
 // ==========================================
 // Se activa al cargar la pogina
 addEventListener("DOMContentLoaded", (event) => onInit(event));
@@ -15,6 +15,16 @@ class AccountData {
     }
 }
 
+class DepositResponse {
+    constructor(amount, type, category_name, description, createdAt){
+        this.amount = amount,
+        this.type = type,
+        this.category_name = category_name,
+        this.description = description,
+        this.createdAt = createdAt
+    }
+}
+
 // Funcin asncrona que se ejcuta al cargar la pogina se encarga de comprobar
 // si hay o no un token y en caso de no haberlo o ser involido redirige a login
 async function onInit(event) {
@@ -23,7 +33,7 @@ async function onInit(event) {
         let accountData = await getAccount();
         if (accountData) {
             mostrarInfo(accountData);
-        }
+        } else {console.log("No se pudo obtener la data del account token:" + token)}
     } else {
         // window.location.href = "../login/indexLogin.html"; // Comentado temporalmente si se quiere ver el mockup
     }
@@ -52,13 +62,32 @@ const getAccount = async () => {
     }
 }
 
+const depositar = async (amount) => {
+    if (!axiosInstance) return null;
+    try {
+        const response = await axiosInstance.post("/transaction/deposito",
+            null,
+            {
+                params: { amount: amount }
+            }
+        );
+        return response.data;
+    }
+    catch (error) {
+        // window.location.href= "../login/indexLogin.html";
+        console.error(error);
+        console.log("Error: " + error.response.data)
+        return null;
+    }
+}
+
 function mostrarInfo(accountData){
     const balanceEl = document.getElementById('saldoTotal');
     if (balanceEl) {
         balanceEl.textContent = "$ " + parseFloat(accountData.balance).toFixed(2);
     }
     
-    // Si tuvieramos un H1 'welcome', podramos inyectarlo aqu
+    // Si tuvieramos un H1 'welcome', podramos inyectarlo aquí
     const welcome = document.getElementById('welcome');
     if (welcome) welcome.textContent = "Hola de nuevo";
 }
@@ -73,7 +102,7 @@ function ocultarMensaje(elemento) {
 }
 
 // ==========================================
-// L�GICA DE UI (NUESTRA)
+// L�GICA DE UI (NUESTRA)
 // ==========================================
 /**
  * Hola, hola! acá hay un ejemplo de cómo generar los componentes dinámicamente
@@ -304,7 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const saldoTotalElement = document.getElementById('saldoTotal');
 
     if (btnAbrirDeposito && modalCargarSaldo) {
-        
         const cerrarModalSaldo = () => {
             modalCargarSaldo.classList.add('opacity-0');
             modalCargarSaldoContent.classList.add('translate-y-full');
@@ -343,12 +371,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Confirmar Depósito
-        btnConfirmarDeposito.addEventListener('click', () => {
+        btnConfirmarDeposito.addEventListener('click', async () => {
             const montoDepositado = parseFloat(inputMontoDeposito.value);
             
             btnConfirmarDeposito.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
-            
-            setTimeout(() => {
+            let response = await depositar(montoDepositado);
+            setTimeout(async () => {
                 // Cerrar modal
                 cerrarModalSaldo();
                 btnConfirmarDeposito.innerHTML = `Confirmar Depósito`;
@@ -381,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Actualizar Saldo Visual
-                const nuevoSaldo = 7850 + montoDepositado;
+                const nuevoSaldo = (await getAccount()).balance;
                 const saldoStr = nuevoSaldo.toLocaleString('es-AR', { minimumFractionDigits: 2 });
                 const [enteros, decimales] = saldoStr.split(',');
                 saldoTotalElement.innerHTML = `$ ${enteros}<span class="text-xl opacity-80" id="saldoDecimales">,${decimales}</span>`;

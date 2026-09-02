@@ -18,7 +18,6 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@CrossOrigin
 @RequestMapping("/api/transaction")
 public class TransactionController {
     private final AccountService accountService;
