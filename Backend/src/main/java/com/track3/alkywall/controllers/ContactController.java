@@ -31,10 +31,9 @@ public class ContactController {
     ) {
         Contact contact = contactService.addContact(
                 authentication.getName(),
-                request.contactEmail(),
+                request.accountIdentifier(),
                 request.name()
         );
-
         return ResponseEntity.status(HttpStatus.CREATED).body(new DataApiResponse<>(
                 true,
                 "Contacto añadido exitosamente",

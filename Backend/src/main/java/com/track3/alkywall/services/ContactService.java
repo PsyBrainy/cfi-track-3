@@ -3,6 +3,7 @@ package com.track3.alkywall.services;
 import com.track3.alkywall.config.exceptions.AlreadyExistsException;
 import com.track3.alkywall.config.exceptions.InvalidTransferException;
 import com.track3.alkywall.config.exceptions.NotFoundException;
+import com.track3.alkywall.models.Account;
 import com.track3.alkywall.models.Contact;
 import com.track3.alkywall.models.User;
 import com.track3.alkywall.repositories.ContactRepository;
@@ -19,30 +20,31 @@ public class ContactService {
 
     private final ContactRepository contactRepository;
     private final UserRepository userRepository;
+    private final AccountService accountService;
 
-    public ContactService(ContactRepository contactRepository, UserRepository userRepository) {
+    public ContactService(ContactRepository contactRepository, UserRepository userRepository, AccountService accountService) {
         this.contactRepository = contactRepository;
         this.userRepository = userRepository;
+        this.accountService = accountService;
     }
 
-
     @Transactional
-    public Contact addContact(String currentUserEmail, String contactEmail, String name) {
-        log.info("Usuario {} intentando agregar como contacto a {}", currentUserEmail, contactEmail);
-
-        if (currentUserEmail.equalsIgnoreCase(contactEmail)) {
-            log.error("El usuario {} intentó agregarse a sí mismo", currentUserEmail);
-            throw new InvalidTransferException("No puedes agregarte a ti mismo como contacto");
-        }
+    public Contact addContact(String currentUserEmail, String accountIdentifier, String name) {
+        log.info("Usuario {} intentando agregar como contacto mediante cuenta/alias {}", currentUserEmail, accountIdentifier);
 
         User currentUser = userRepository.findByEmail(currentUserEmail)
                 .orElseThrow(() -> new NotFoundException("Usuario autenticado no encontrado"));
 
-        User contactUser = userRepository.findByEmail(contactEmail)
-                .orElseThrow(() -> new NotFoundException("El contacto a agregar no existe en el sistema"));
+        Account destinationAccount = accountService.getAccountByAccountNumberOrAlias(accountIdentifier);
+        User contactUser = destinationAccount.getUser();
+
+        if (currentUser.getEmail().equalsIgnoreCase(contactUser.getEmail())) {
+            log.error("El usuario {} intentó agregarse a sí mismo como contacto", currentUserEmail);
+            throw new InvalidTransferException("No puedes agregarte a ti mismo como contacto");
+        }
 
         if (contactRepository.existsByUserEmailAndContactUserId(currentUserEmail, contactUser.getId())) {
-            log.error("El contacto {} ya existe en la lista de {}", contactEmail, currentUserEmail);
+            log.error("El contacto {} ya existe en la lista de {}", contactUser.getEmail(), currentUserEmail);
             throw new AlreadyExistsException("Este usuario ya se encuentra en tu lista de contactos");
         }
 
