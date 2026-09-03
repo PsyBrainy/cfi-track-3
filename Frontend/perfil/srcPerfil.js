@@ -1,11 +1,44 @@
-document.addEventListener('DOMContentLoaded', () => {
+const axiosInstance = typeof axios !== 'undefined' ? axios.create({
+    baseURL: "http://localhost:8080/api",
+    timeout: 5000,
+    headers: {
+        "Authorization": "Bearer " + localStorage.getItem("token"),
+        "Content-Type": "application/json"
+    },
+}) : null;
+const getUser = async () => {
+    if (!axiosInstance) return null;
+    try {
+        const response = await axiosInstance.get("/user/current");
+        return response.data;
+    }
+    catch (error) {
+        console.error(error);
+        return null;
+    }
+}
 
+document.addEventListener('DOMContentLoaded', async () => {
+
+    const nombreUsuario = document.getElementById('nombreUsuario');
+    const emailUsuario = document.getElementById('emailUsuario');
+    const dniUsuario = document.getElementById('dniUsuario');
     const btnCopiarCVU = document.getElementById('btnCopiarCVU');
     const cvuUsuario = document.getElementById('cvuUsuario');
     const btnCopiarAlias = document.getElementById('btnCopiarAlias');
     const aliasUsuario = document.getElementById('aliasUsuario');
     const toastCopiar = document.getElementById('toastCopiar');
     let toastTimeout;
+
+    //Mostrar información del usuario
+    const user = (await getUser());
+    nombreUsuario.innerText = user.data.firstName + user.data.lastName.charAt(0).toUpperCase();;
+    emailUsuario.innerText = user.data.email;
+    cvuUsuario.innerText = user.data.account.accountNumber;
+    aliasUsuario.innerText = user.data.account.alias;
+    dniUsuario.innerText = user.data.dni;
+    
+    
 
     // Función para mostrar el aviso "Copiado!" flotante
     const mostrarToast = () => {
