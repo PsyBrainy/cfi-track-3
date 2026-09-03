@@ -1,5 +1,5 @@
 // ==========================================
-// INTEGRACIÓN CON BACKEND (Desde develop)
+// INTEGRACI�N CON BACKEND (Desde develop)
 // ==========================================
 // Se activa al cargar la pogina
 addEventListener("DOMContentLoaded", (event) => onInit(event));
@@ -12,6 +12,16 @@ class AccountData {
         this.currency = currency;
         this.alias = alias;
         this.isActive = isActive;
+    }
+}
+
+class DepositResponse {
+    constructor(amount, type, category_name, description, createdAt){
+        this.amount = amount,
+        this.type = type,
+        this.category_name = category_name,
+        this.description = description,
+        this.createdAt = createdAt
     }
 }
 
@@ -52,13 +62,32 @@ const getAccount = async () => {
     }
 }
 
+const depositar = async (amount) => {
+    if (!axiosInstance) return null;
+    try {
+        const response = await axiosInstance.post("/transaction/deposito",
+            null,
+            {
+                params: { amount: amount }
+            }
+        );
+        return response.data;
+    }
+    catch (error) {
+        // window.location.href= "../login/indexLogin.html";
+        console.error(error);
+        console.log("Error: " + error.response.data)
+        return null;
+    }
+}
+
 function mostrarInfo(accountData){
     const balanceEl = document.getElementById('saldoTotal');
     if (balanceEl) {
         balanceEl.textContent = "$ " + parseFloat(accountData.balance).toFixed(2);
     }
     
-    // Si tuvieramos un H1 'welcome', podramos inyectarlo aqu
+    // Si tuvieramos un H1 'welcome', podramos inyectarlo aquí
     const welcome = document.getElementById('welcome');
     if (welcome) welcome.textContent = "Hola de nuevo";
 }
@@ -73,14 +102,14 @@ function ocultarMensaje(elemento) {
 }
 
 // ==========================================
-// LÓGICA DE UI (NUESTRA)
+// L�GICA DE UI (NUESTRA)
 // ==========================================
 /**
- * Hola, hola! acÃ¡ hay un ejemplo de cÃ³mo generar los componentes dinÃ¡micamente
+ * Hola, hola! acá hay un ejemplo de cómo generar los componentes dinámicamente
  * cuando leas los datos desde el Backend
  *
- * Actualmente los datos estÃ¡n hardcodeados
- * para que podamos ver y ajustar el diseÃ±o.
+ * Actualmente los datos están hardcodeados
+ * para que podamos ver y ajustar el diseño.
  * Cuando conectes los datos reales, los borramos
  *
  * CONTACTOS RECIENTES
@@ -110,7 +139,7 @@ function ocultarMensaje(elemento) {
  *     const contenedor = document.getElementById('listaMovimientos');
  *     
  *     movimientosBD.forEach(mov => {
- *         // PequeÃ±a lÃ³gica para diferenciar ingresos de egresos
+ *         // Pequeña lógica para diferenciar ingresos de egresos
  *         const esIngreso = mov.monto > 0;
  *         const colorMonto = esIngreso ? 'text-blue-600' : 'text-slate-800';
  *         const signo = esIngreso ? '+' : '-';
@@ -119,7 +148,7 @@ function ocultarMensaje(elemento) {
  *         const movimientoHTML = `
  *             <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
  *                 <div class="flex items-center gap-3">
- *                     <!-- En un caso real, los colores e Ã­conos dependerÃ¡n de la categorÃ­a del movimiento -->
+ *                     <!-- En un caso real, los colores e íconos dependerán de la categoría del movimiento -->
  *                     <div class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-slate-500 bg-slate-50">
  *                         <i class="${mov.iconoClase} text-sm"></i>
  *                     </div>
@@ -142,7 +171,7 @@ function ocultarMensaje(elemento) {
 document.addEventListener('DOMContentLoaded', () => {
     
 
-    // LÃ“GICA DEL MODAL NUEVA CUENTA
+    // LÓGICA DEL MODAL NUEVA CUENTA
 
     const btnNuevaCuenta = document.getElementById('btnNuevaCuentaDashboard');
     const modalNuevaCuenta = document.getElementById('modalNuevaCuenta');
@@ -168,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modalNuevaCuentaContent.classList.add('translate-y-full');
             setTimeout(() => {
                 modalNuevaCuenta.classList.add('hidden');
-            }, 300); // Esperar que termine la transiciÃ³n de CSS
+            }, 300); // Esperar que termine la transición de CSS
         };
 
         // Cerrar al tocar la cruz
@@ -181,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // LÃ³gica de Guardar Contacto
+        // Lógica de Guardar Contacto
         btnGuardarModalCuenta.addEventListener('click', () => {
             const alias = document.getElementById('inputModalCbu').value;
             const nombre = document.getElementById('inputModalNombre').value;
@@ -192,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             btnGuardarModalCuenta.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando...`;
             
-            // Simular peticiÃ³n al backend
+            // Simular petición al backend
             setTimeout(() => {
                 btnGuardarModalCuenta.innerHTML = `Guardar Contacto`;
                 cerrarModal();
@@ -205,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    // ANÃLISIS DE GASTOS
+    // ANÁLISIS DE GASTOS
 
     const renderizarAnalisisGastos = () => {
         const contenedorBarras = document.getElementById('contenedorBarrasGastos');
@@ -267,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 100);
 
-        // LÃ³gica del acordeÃ³n
+        // Lógica del acordeón
         let expandido = false;
         tarjetaAnalisisGastos.addEventListener('click', () => {
             expandido = !expandido;
@@ -290,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderizarAnalisisGastos();
 
 
-    // CARGAR SALDO (DepÃ³sito)
+    // CARGAR SALDO (Depósito)
 
     const btnAbrirDeposito = document.getElementById('btnAbrirDeposito');
     const modalCargarSaldo = document.getElementById('modalCargarSaldo');
@@ -304,7 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const saldoTotalElement = document.getElementById('saldoTotal');
 
     if (btnAbrirDeposito && modalCargarSaldo) {
-        
         const cerrarModalSaldo = () => {
             modalCargarSaldo.classList.add('opacity-0');
             modalCargarSaldoContent.classList.add('translate-y-full');
@@ -330,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === modalCargarSaldo) cerrarModalSaldo();
         });
 
-        // Validar input para habilitar botÃ³n
+        // Validar input para habilitar botón
         inputMontoDeposito.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             if (val > 0) {
@@ -342,25 +370,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Confirmar DepÃ³sito
-        btnConfirmarDeposito.addEventListener('click', () => {
+        // Confirmar Depósito
+        btnConfirmarDeposito.addEventListener('click', async () => {
             const montoDepositado = parseFloat(inputMontoDeposito.value);
             
             btnConfirmarDeposito.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
-            
-            setTimeout(() => {
+            let response = await depositar(montoDepositado);
+            setTimeout(async () => {
                 // Cerrar modal
                 cerrarModalSaldo();
-                btnConfirmarDeposito.innerHTML = `Confirmar DepÃ³sito`;
+                btnConfirmarDeposito.innerHTML = `Confirmar Depósito`;
 
-                // Mostrar pantalla de Ã©xito
+                // Mostrar pantalla de éxito
                 pantallaExitoDeposito.classList.remove('hidden');
                 pantallaExitoDeposito.classList.add('flex');
                 setTimeout(() => {
                     pantallaExitoDeposito.classList.remove('opacity-0');
                 }, 10);
 
-                // Cargar Lottie si no estÃ¡
+                // Cargar Lottie si no está
                 if (lottieExitoDeposito.innerHTML === '') {
                     lottie.loadAnimation({
                         container: lottieExitoDeposito, 
@@ -381,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Actualizar Saldo Visual
-                const nuevoSaldo = 7850 + montoDepositado;
+                const nuevoSaldo = (await getAccount()).balance;
                 const saldoStr = nuevoSaldo.toLocaleString('es-AR', { minimumFractionDigits: 2 });
                 const [enteros, decimales] = saldoStr.split(',');
                 saldoTotalElement.innerHTML = `$ ${enteros}<span class="text-xl opacity-80" id="saldoDecimales">,${decimales}</span>`;
