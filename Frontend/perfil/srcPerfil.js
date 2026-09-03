@@ -14,6 +14,7 @@ const getUser = async () => {
     }
     catch (error) {
         console.error(error);
+        window.location.href = "../dashboard/indexDashboard.html"
         return null;
     }
 }

@@ -47,6 +47,8 @@
                     <i class="fa-solid fa-magnifying-glass absolute left-4 text-slate-400"></i>
                     <input type="text" id="inputDestinatario" placeholder="Ingresá CBU, CVU o Alias..." class="w-full h-14 pl-12 pr-4 rounded-2xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 transition-colors placeholder:font-medium placeholder:text-slate-400 shadow-sm">
                 </div>
+                <p id="notFound" class="text-red-500 text-xs font-medium"></p>
+
                 <button id="btnBuscar" class="w-full h-12 bg-blue-600 text-white rounded-2xl font-bold text-sm mt-3 opacity-50 cursor-not-allowed transition hover:bg-blue-700 shadow-md" disabled>
                     Continuar
                 </button>
@@ -188,6 +190,8 @@
         </div>
 
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../fx.js"></script>
     <script src="srcTransferencia.js"></script>
     <script src="../menu/bottomNav.js"></script>

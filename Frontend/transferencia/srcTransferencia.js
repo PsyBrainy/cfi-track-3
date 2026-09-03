@@ -1,3 +1,61 @@
+class NewTransferRequest {
+    constructor(sourceAccountNumber, destinationAccount, amount, description) {
+        this.sourceAccountNumber = sourceAccountNumber;
+        this.destinationAccount = destinationAccount;
+        this.amount = amount;
+        this.description = description;
+    }
+}
+const axiosInstance = typeof axios !== 'undefined' ? axios.create({
+    baseURL: "http://localhost:8080/api",
+    timeout: 5000,
+    headers: {
+        "Authorization": "Bearer " + localStorage.getItem("token"),
+        "Content-Type": "application/json"
+    },
+}) : null;
+const getUser = async () => {
+    if (!axiosInstance) return null;
+    try {
+        const response = await axiosInstance.get("/user/current");
+        console.log(response.data.data)
+        return response.data.data;
+    }
+    catch (error) {
+        console.error(error);
+        window.location.href = "../dashboard/indexDashboard.html"
+        return null;
+    }
+}
+const getUserDataByAliasOrCvu = async (data) => {
+    if (!axiosInstance) return null;
+    try {
+        const response = await axiosInstance.get("/user/identifier/" + data);
+        document.getElementById('notFound').innerText = ''
+        return response.data.data;
+    }
+    catch (error) {
+        console.error(error);
+        if(error.status == 404){
+            document.getElementById('notFound').innerText = 'No se encontró un usuario con ese alias/CVU'
+        }
+        return null;
+    }
+}
+const transferir = async (newTransferRequest) => {
+    if (!axiosInstance) return null;
+    try {
+        const response = await axiosInstance.post("/transaction/transfer",
+            newTransferRequest
+        );
+        return response;
+    }
+    catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Referencias al DOM (Pasos) ---
@@ -5,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const paso2 = document.getElementById('paso2');
     const paso3 = document.getElementById('paso3');
     const btnVolver = document.getElementById('btnVolver');
-    
+
     // --- Referencias Paso 1 ---
     const inputDestinatario = document.getElementById('inputDestinatario');
     const btnBuscar = document.getElementById('btnBuscar');
@@ -26,14 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const boxInputNombre = document.getElementById('boxInputNombre');
     const nombreAgendado = document.getElementById('nombreAgendado');
     const btnTransferir = document.getElementById('btnTransferir');
-    
+
     // Toggle de Guardar
     const toggleGuardar = document.getElementById('toggleGuardar');
     const toggleBolaGuardar = document.getElementById('toggleBolaGuardar');
 
     // --- Variables de Estado ---
     let currentStep = 1;
-    let destinatarioActual = { nombre: '', alias: '', esNuevo: false };
+    let destinatarioActual = { firstName: '', alias: '', esNuevo: false };
     let montoActual = 0;
     let guardarContacto = true;
 
@@ -57,14 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
         paso3.classList.add('hidden');
         if (paso4) paso4.classList.add('hidden');
         if (paso5) paso5.classList.add('hidden');
-        
+
         paso1.classList.remove('fade-in');
         paso2.classList.remove('fade-in');
         paso3.classList.remove('fade-in');
         if (paso4) paso4.classList.remove('fade-in');
         if (paso5) paso5.classList.remove('fade-in');
-        
-        void paso1.offsetWidth; 
+
+        void paso1.offsetWidth;
 
         if (paso === 1) {
             paso1.classList.remove('hidden');
@@ -112,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    
+
     // Habilitar botón si escribe un CBU/Alias (simulación)
     inputDestinatario.addEventListener('input', (e) => {
         const val = e.target.value.trim();
@@ -126,12 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Clic en Buscar (Asumimos que es un Alias/CBU NUEVO)
-    btnBuscar.addEventListener('click', () => {
-        destinatarioActual = {
-            nombre: "Usuario Desconocido", // Aquí el backend haría un fetch para traer el nombre real
-            alias: inputDestinatario.value.trim(),
-            esNuevo: true
-        };
+    btnBuscar.addEventListener('click', async () => {
+        destinatarioActual = await getUserDataByAliasOrCvu(inputDestinatario.value.trim());
         llenarFichaPaso2();
         mostrarPaso(2);
     });
@@ -140,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     botonesContactos.forEach(btn => {
         btn.addEventListener('click', () => {
             destinatarioActual = {
-                nombre: btn.getAttribute('data-nombre'),
+                firstName: btn.getAttribute('data-nombre'),
                 alias: btn.getAttribute('data-alias'),
                 esNuevo: false
             };
@@ -151,9 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     const llenarFichaPaso2 = () => {
-        nombreDestinatario.innerText = destinatarioActual.nombre;
+        nombreDestinatario.innerText = destinatarioActual.firstName;
         // Tomamos las dos primeras letras para el avatar
-        avatarDestinatario.innerText = destinatarioActual.nombre.substring(0, 2).toUpperCase();
+        avatarDestinatario.innerText = destinatarioActual.firstName.substring(0, 2).toUpperCase();
     };
 
     btnCambiarDestino.addEventListener('click', () => {
@@ -181,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const prepararResumen = () => {
         // Formatear monto a moneda argentina
         resumenMonto.innerText = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(montoActual);
-        resumenNombre.innerText = destinatarioActual.nombre;
+        resumenNombre.innerText = destinatarioActual.firstName;
         resumenAlias.innerText = destinatarioActual.alias;
 
         // Si el contacto es nuevo, mostramos la opción de guardarlo. Si ya existía, la ocultamos.
@@ -217,55 +271,64 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    btnTransferir.addEventListener('click', () => {
+    btnTransferir.addEventListener('click', async () => {
         // Aquí se enviaría el fetch()/Axios al backend
         console.log("=== ENVIANDO TRANSFERENCIA ===");
-        console.log("Destino:", destinatarioActual.alias);
+        console.log("Destino:", destinatarioActual.account.alias);
         console.log("Monto:", montoActual);
-        
+
         if (destinatarioActual.esNuevo && guardarContacto) {
-            const nombrePersonalizado = nombreAgendado.value.trim() || destinatarioActual.nombre;
+            const nombrePersonalizado = nombreAgendado.value.trim() || destinatarioActual.firstName;
             console.log("Acción extra: Guardar en agenda como ->", nombrePersonalizado);
         } else {
             console.log("¿Guardar en agenda?: No");
         }
-        
-        btnTransferir.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
-        setTimeout(() => {
-            // Simulamos ERROR si el monto es mayor a 50000 para probar la pantalla
-            if (montoActual > 50000) {
-                mostrarPaso(5);
-                const contenedorLottieFail = document.getElementById('lottieFail');
-                if (contenedorLottieFail) {
-                    contenedorLottieFail.innerHTML = ''; 
-                    lottie.loadAnimation({
-                        container: contenedorLottieFail, 
-                        renderer: 'svg',
-                        loop: false,
-                        autoplay: true,
-                        path: '../assets/lottie_fail.json' 
-                    });
-                }
-            } else {
-                // Mostrar Paso 4 (Éxito)
-                mostrarPaso(4);
-                
-                const nombreDestinoFinal = (destinatarioActual.esNuevo && guardarContacto && nombreAgendado.value.trim() !== '') ? nombreAgendado.value.trim() : destinatarioActual.nombre;
-                document.getElementById('exitoNombre').innerText = nombreDestinoFinal;
 
-                const contenedorLottie = document.getElementById('lottieSuccess');
-                if (contenedorLottie) {
-                    contenedorLottie.innerHTML = ''; 
-                    lottie.loadAnimation({
-                        container: contenedorLottie, 
-                        renderer: 'svg',
-                        loop: false,
-                        autoplay: true,
-                        path: '../assets/lottie_success.json' 
-                    });
-                }
+        btnTransferir.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
+        // setTimeout(() => {
+        const usuarioActual = await getUser();
+
+        const newTransferRequest = new NewTransferRequest(
+            usuarioActual.account.accountNumber,
+            destinatarioActual.account.accountNumber, 
+            montoActual,
+            "varios"
+        );
+        let transferencia = await transferir(newTransferRequest);
+        if (transferencia.status != 201 && transferencia.status != 200) {
+            // En caso de error
+            mostrarPaso(5);
+            const contenedorLottieFail = document.getElementById('lottieFail');
+            if (contenedorLottieFail) {
+                contenedorLottieFail.innerHTML = '';
+                lottie.loadAnimation({
+                    container: contenedorLottieFail,
+                    renderer: 'svg',
+                    loop: false,
+                    autoplay: true,
+                    path: '../assets/lottie_fail.json'
+                });
             }
-        }, 1500);
+        } else {
+            // Mostrar Paso 4 (Éxito)
+            mostrarPaso(4);
+
+            const nombreDestinoFinal = (destinatarioActual.esNuevo && guardarContacto && nombreAgendado.value.trim() !== '') ? nombreAgendado.value.trim() : destinatarioActual.firstName;
+            document.getElementById('exitoNombre').innerText = nombreDestinoFinal;
+
+            const contenedorLottie = document.getElementById('lottieSuccess');
+            if (contenedorLottie) {
+                contenedorLottie.innerHTML = '';
+                lottie.loadAnimation({
+                    container: contenedorLottie,
+                    renderer: 'svg',
+                    loop: false,
+                    autoplay: true,
+                    path: '../assets/lottie_success.json'
+                });
+            }
+        }
+        // }, 1500);
     });
 
 
@@ -273,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (paramAlias && paramNombre) {
         destinatarioActual = {
-            nombre: paramNombre,
+            firstName: paramNombre,
             alias: paramAlias,
             esNuevo: false
         };
