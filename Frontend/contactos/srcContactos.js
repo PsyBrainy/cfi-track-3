@@ -26,9 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let contactoIdAEliminar = null;
     let contactoElementoAEliminar = null;
 
-    // ==========================================
-    // 1. CARGAR CONTACTOS DESDE EL BACKEND
-    // ==========================================
+
+    // CARGAR CONTACTOS DESDE EL BACKEND
+
     async function cargarContactos() {
         try {
             const response = await fetch(`${API_BASE_URL}/contacts`, {
@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ==========================================
-    // 2. RENDERIZAR CONTACTOS EN EL DOM
-    // ==========================================
+
+    // RENDERIZAR CONTACTOS EN EL DOM
+
     function renderizarContactos(contactos) {
         if (!listaItemsContactos) return;
 
@@ -126,9 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
         vincularBotonesEliminar();
     }
 
-    // ==========================================
-    // 3. LÓGICA DE BÚSQUEDA / FILTRO
-    // ==========================================
+
+    // LÓGICA DE BÚSQUEDA / FILTRO
+
     if (inputBusqueda) {
         inputBusqueda.addEventListener('input', (e) => {
             const termino = e.target.value.toLowerCase().trim();
@@ -159,9 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 4. LÓGICA DEL BOTÓN VOLVER
-    // ==========================================
+
+    // LÓGICA DEL BOTÓN VOLVER
+
     const btnVolver = document.getElementById('btnVolver');
     if (btnVolver) {
         btnVolver.addEventListener('click', () => {
@@ -172,9 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 5. MODAL NUEVO CONTACTO (AGREGAR AL BACKEND)
-    // ==========================================
+
+    // MODAL NUEVO CONTACTO
+
     const btnNuevoContacto = document.getElementById('btnNuevoContacto');
     const modalNuevaCuenta = document.getElementById('modalNuevaCuenta');
     const btnCerrarModalCuenta = document.getElementById('btnCerrarModalCuenta');
@@ -256,9 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 6. MODAL ELIMINAR CONTACTO (DELETE AL BACKEND)
-    // ==========================================
+
+    // MODAL ELIMINAR CONTACTO (DELETE AL BACKEND)
+
     const modalEliminarContacto = document.getElementById('modalEliminarContacto');
     const modalEliminarContactoContent = document.getElementById('modalEliminarContactoContent');
     const nombreContactoAEliminar = document.getElementById('nombreContactoAEliminar');
