@@ -59,7 +59,7 @@ const findUser = async (loginRequest) => {
     }
 };
 function isValidPassword(password) {
-    return (password !== "" && password.length > 8);
+    return (password !== "" && password.length >= 8);
 }
 function isValidEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
