@@ -70,25 +70,25 @@ const getContactos = async () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // --- Referencias al DOM (Pasos) ---
+    // --- Referencias al DOM ---
     const paso1 = document.getElementById('paso1');
     const paso2 = document.getElementById('paso2');
     const paso3 = document.getElementById('paso3');
     const btnVolver = document.getElementById('btnVolver');
 
-    // --- Referencias Paso 1 ---
+
     const inputDestinatario = document.getElementById('inputDestinatario');
     const btnBuscar = document.getElementById('btnBuscar');
     const botonesContactos = document.querySelectorAll('.btn-contacto');
 
-    // --- Referencias Paso 2 ---
+
     const avatarDestinatario = document.getElementById('avatarDestinatario');
     const nombreDestinatario = document.getElementById('nombreDestinatario');
     const btnCambiarDestino = document.getElementById('btnCambiarDestino');
     const inputMonto = document.getElementById('inputMonto');
     const btnContinuarMonto = document.getElementById('btnContinuarMonto');
 
-    // --- Referencias Paso 3 ---
+
     const resumenMonto = document.getElementById('resumenMonto');
     const resumenNombre = document.getElementById('resumenNombre');
     const resumenAlias = document.getElementById('resumenAlias');
@@ -97,11 +97,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const nombreAgendado = document.getElementById('nombreAgendado');
     const btnTransferir = document.getElementById('btnTransferir');
 
-    // Toggle de Guardar
+    // Guardar
     const toggleGuardar = document.getElementById('toggleGuardar');
     const toggleBolaGuardar = document.getElementById('toggleBolaGuardar');
 
-    // --- Variables de Estado ---
+
     let currentStep = 1;
     let destinatarioActual = { firstName: '', alias: '', esNuevo: false };
     let montoActual = 0;
@@ -111,16 +111,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const paso5 = document.getElementById('paso5');
     const btnReintentar = document.getElementById('btnReintentar');
 
-    // ==========================================
-    // INICIALIZACIÓN (Parámetros por URL)
-    // ==========================================
+
+    // INICIALIZACIÓN
+
     const urlParams = new URLSearchParams(window.location.search);
     const paramAlias = urlParams.get('alias');
     const paramNombre = urlParams.get('nombre');
 
-    // ==========================================
     // NAVEGACIÓN Y TRANSICIONES
-    // ==========================================
+
     const mostrarPaso = (paso) => {
         paso1.classList.add('hidden');
         paso2.classList.add('hidden');
