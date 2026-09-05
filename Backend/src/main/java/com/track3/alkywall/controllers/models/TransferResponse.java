@@ -10,7 +10,7 @@ public record TransferResponse(
         String description
 ) {
     public static TransferResponse from(Transfer sourceTransfer) {
-        Account relatedAccount = sourceTransfer.getType().equals("DEBIT") ? sourceTransfer.getRelatedAccount() : sourceTransfer.getAccount();
+        Account relatedAccount = sourceTransfer.getRelatedAccount();
 
         return new TransferResponse(
                 relatedAccount.getUser().getFirstName(),
