@@ -36,7 +36,7 @@ async function logIn(data) {
             } catch (error) {
                 mostrarMensaje("Ocurrió un error al iniciar sesión", document.getElementById('responseGeneral'));
             }
-        } else mostrarMensaje("Intente ingresando una contraseña de más de 8 caracteres", document.getElementById('responsePassword'));
+        } else mostrarMensaje("Intente ingresando una contraseña de 8 caracteres o más", document.getElementById('responsePassword'));
     } else {
         console.log("Contraseña invalida")
         mostrarMensaje("Intente ingresando una dirección de email válida", document.getElementById('responseEmail'));

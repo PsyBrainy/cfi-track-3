@@ -1,6 +1,7 @@
 package com.track3.alkywall.controllers;
 
 import com.track3.alkywall.config.DataApiResponse;
+import com.track3.alkywall.controllers.models.AccountMonthSummary;
 import com.track3.alkywall.controllers.models.NewTransferRequest;
 import com.track3.alkywall.controllers.models.TransactionResponse;
 import com.track3.alkywall.models.Transaction;
@@ -53,19 +54,33 @@ public class TransactionController {
 
     @GetMapping
     public ResponseEntity<DataApiResponse<List<TransactionResponse>>> getAccountTransactions(
-            Authentication authentication
+            Authentication authentication,
+            @RequestParam(required = false) String type
     ){
-        List<Transaction> transactions = transactionService.getAccountTransactions(authentication.getName());
+        List<Transaction> transactions = transactionService.getAccountTransactions(
+                authentication.getName(),
+                type
+        );
 
-        List<TransactionResponse> transactionResponses = transactions.stream().map((t) -> {
-            if(t instanceof Transfer) return TransactionResponse.from((Transfer) t);
-            else return TransactionResponse.from(t);
-        }).toList();
+        List<TransactionResponse> transactionResponses = transactions.stream().map(TransactionResponse::from).toList();
 
         return ResponseEntity.ok().body(new DataApiResponse<>(
                 true,
                 "",
                 transactionResponses
+        ));
+    }
+
+    @GetMapping("/month-summary")
+    public ResponseEntity<DataApiResponse<AccountMonthSummary>> getMonthSummary(
+            Authentication authentication
+    ){
+        AccountMonthSummary summary = AccountMonthSummary.from(transactionService.getMonthSummary(authentication.getName()));
+
+        return ResponseEntity.ok().body(new DataApiResponse<>(
+                true,
+                "",
+                summary
         ));
     }
 }

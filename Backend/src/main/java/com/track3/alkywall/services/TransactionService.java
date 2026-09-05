@@ -9,6 +9,7 @@ import com.track3.alkywall.models.Transaction;
 import com.track3.alkywall.models.Transfer;
 import com.track3.alkywall.repositories.CategoryRepository;
 import com.track3.alkywall.repositories.TransactionRepository;
+import com.track3.alkywall.services.models.TransactionMonthSummary;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,8 +99,21 @@ public class TransactionService {
         account.setBalance(account.getBalance().subtract(amount));
     }
 
-    public List<Transaction> getAccountTransactions(String authenticatedUserEmail) {
-        return transactionRepository.findAllByAccountIdOrderByCreatedAtDesc(
+    public List<Transaction> getAccountTransactions(String authenticatedUserEmail, String type) {
+        if(type == null){
+            return transactionRepository.findAllByAccountIdOrderByCreatedAtDesc(
+                    userService.getUserByEmail(authenticatedUserEmail).account().getId()
+            );
+        }else{
+            return transactionRepository.findAllByAccountIdAndTypeOrderByCreatedAtDesc(
+                    userService.getUserByEmail(authenticatedUserEmail).account().getId(),
+                    type
+            );
+        }
+    }
+
+    public List<TransactionMonthSummary> getMonthSummary(String authenticatedUserEmail){
+        return transactionRepository.getMonthSummaryByAccountId(
                 userService.getUserByEmail(authenticatedUserEmail).account().getId()
         );
     }

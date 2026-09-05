@@ -18,17 +18,21 @@ public record TransactionResponse (
         TransferResponse transfer
 ){
     public static TransactionResponse from(Transaction transaction){
-        return new TransactionResponse(
-                transaction.getId(),
-                transaction.getAmount(),
-                transaction.getType(),
-                transaction.getCategory().getName(),
-                transaction.getCreatedAt(),
-                null
-        );
+        if(transaction instanceof Transfer){
+            return TransactionResponse.from((Transfer)transaction);
+        }else{
+            return new TransactionResponse(
+                    transaction.getId(),
+                    transaction.getAmount(),
+                    transaction.getType(),
+                    transaction.getCategory().getName(),
+                    transaction.getCreatedAt(),
+                    null
+            );
+        }
     }
 
-    public static TransactionResponse from(Transfer transfer){
+    private static TransactionResponse from(Transfer transfer){
         return new TransactionResponse(
                 transfer.getId(),
                 transfer.getAmount(),
