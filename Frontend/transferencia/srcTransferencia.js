@@ -52,9 +52,11 @@ const transferir = async (newTransferRequest) => {
     }
     catch (error) {
         console.error(error);
-        return null;
+        return error.response || null;
     }
 }
+
+const MENSAJE_ERROR_TRANSFERENCIA_DEFAULT = 'No pudimos enviar el dinero. Verificá tener saldo suficiente e intentá nuevamente.';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -185,7 +187,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Clic en Buscar (Asumimos que es un Alias/CBU NUEVO)
     btnBuscar.addEventListener('click', async () => {
-        destinatarioActual = await getUserDataByAliasOrCvu(inputDestinatario.value.trim());
+        const busqueda = inputDestinatario.value.trim();
+        const userData = await getUserDataByAliasOrCvu(busqueda);
+        if (!userData) return;
+
+        destinatarioActual = {
+            firstName: userData.firstName,
+            alias: userData.account ? userData.account.alias : busqueda,
+            esNuevo: true
+        };
         llenarFichaPaso2();
         mostrarPaso(2);
     });
@@ -274,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnTransferir.addEventListener('click', async () => {
         // Aquí se enviaría el fetch()/Axios al backend
         console.log("=== ENVIANDO TRANSFERENCIA ===");
-        console.log("Destino:", destinatarioActual.account.alias);
+        console.log("Destino:", destinatarioActual.alias);
         console.log("Monto:", montoActual);
 
         if (destinatarioActual.esNuevo && guardarContacto) {
@@ -290,14 +300,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newTransferRequest = new NewTransferRequest(
             usuarioActual.account.accountNumber,
-            destinatarioActual.account.accountNumber, 
+            destinatarioActual.alias,
             montoActual,
             "varios"
         );
         let transferencia = await transferir(newTransferRequest);
-        if (transferencia.status != 201 && transferencia.status != 200) {
+        if (!transferencia || (transferencia.status != 201 && transferencia.status != 200)) {
             // En caso de error
             mostrarPaso(5);
+            const mensajeErrorEl = document.getElementById('mensajeErrorTransferencia');
+            if (mensajeErrorEl) {
+                mensajeErrorEl.innerText = transferencia?.data?.message || MENSAJE_ERROR_TRANSFERENCIA_DEFAULT;
+            }
             const contenedorLottieFail = document.getElementById('lottieFail');
             if (contenedorLottieFail) {
                 contenedorLottieFail.innerHTML = '';
