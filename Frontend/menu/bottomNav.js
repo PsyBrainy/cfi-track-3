@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const bottomNavHTML = `
         <!-- Botonera Inferior Flotante -->
-        <nav class="absolute bottom-0 left-0 w-full bg-white md:rounded-b-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-6 pt-4 px-2 z-40 border-t border-slate-100">
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:max-w-[380px] bg-white md:rounded-b-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-6 pt-4 px-2 z-40 border-t border-slate-100">
             <ul class="flex justify-between items-end relative">
                 <!-- Inicio -->
                 <li class="flex-1 flex justify-center">
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 <!-- QR Botón Flotante -->
                 <li class="flex-1 flex justify-center relative">
-                    <button id="btnFlotanteQR" class="absolute -top-12 left-1/2 -translate-x-1/2 w-[60px] h-[60px] bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center text-white shadow-[0_8px_20px_rgba(37,99,235,0.4)] border-[5px] border-[#f0f6ff] transition transform hover:scale-105 active:scale-95 z-50">
+                    <button id="btnFlotanteQR" class="absolute -top-10 left-1/2 -translate-x-1/2 w-[60px] h-[60px] bg-gradient-to-br from-blue-600 to-blue-500 rounded-full flex items-center justify-center text-white shadow-[0_8px_20px_rgba(37,99,235,0.4)] border-[5px] border-[#f0f6ff] transition transform hover:scale-105 active:scale-95 z-50">
                         <i class="fa-solid fa-qrcode text-2xl"></i>
                     </button>
                     <div class="h-6"></div>
