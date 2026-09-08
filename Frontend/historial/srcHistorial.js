@@ -1,3 +1,6 @@
+// Importo el modal para ver y descargar el comprobante en PDF
+import { mostrarComprobanteModal } from "../comprobante/comprobanteModal.js";
+
 const axiosInstance = axios.create({
     baseURL: "http://localhost:8080/api/transaction",
     timeout: 5000,
@@ -91,6 +94,7 @@ export async function obtenerMovimientosHTML(type = null, mostrarFecha = true, l
         let colorMonto = esIngreso ? 'text-blue-600' : 'text-slate-800';
         let titulo = 'Operación';
         let desc = '';
+        let nombreRelacionado = '';
 
         if(mov.categoryName === "TRANSFER"){
             esIngreso = mov.type === "CREDIT";
@@ -107,7 +111,7 @@ export async function obtenerMovimientosHTML(type = null, mostrarFecha = true, l
                 iconBorderColor: "border-red-100"
             };
 
-            const nombreRelacionado = [mov.transfer?.relatedAccountFirstName, mov.transfer?.relatedAccountLastName]
+            nombreRelacionado = [mov.transfer?.relatedAccountFirstName, mov.transfer?.relatedAccountLastName]
                 .filter(Boolean)
                 .join(' ');
 
@@ -152,8 +156,27 @@ export async function obtenerMovimientosHTML(type = null, mostrarFecha = true, l
             }
         }
 
+        // Si es un egreso (transferencia enviada o pago), guardo los datos para el comprobante
+        let datosComprobanteAttr = '';
+        const esEgreso = !esIngreso && (mov.categoryName === "TRANSFER" || mov.categoryName === "PAYMENT");
+
+        if (esEgreso) {
+            const esTransf = mov.categoryName === "TRANSFER";
+            const datosComp = {
+                tipo: esTransf ? 'TRANSFERENCIA' : 'PAGO',
+                monto: parseFloat(mov.amount),
+                destinatario: esTransf ? (nombreRelacionado || mov.transfer?.description || 'Destinatario') : (mov.payment?.name || 'Comercio'),
+                cuentaDestino: esTransf ? (mov.transfer?.relatedAccountNumber || mov.transfer?.relatedAccountAlias || '') : (mov.payment?.destinationAccount || ''),
+                categoria: !esTransf ? (mov.payment?.category || 'Varios') : '',
+                fecha: mov.createdAt || mov.date || new Date().toISOString(),
+                nroOperacion: mov.id || null
+            };
+            // Codifico los datos en un atributo para poder leerlos al hacer clic
+            datosComprobanteAttr = `data-comprobante="${encodeURIComponent(JSON.stringify(datosComp))}"`;
+        }
+
         movimientosHTML += `
-                <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
+                <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer ${esEgreso ? 'item-movimiento-egreso' : ''}" ${datosComprobanteAttr} ${esEgreso ? 'title="Tocar para ver comprobante"' : ''}>
                         <div class="flex items-center gap-3">
                             <div class="w-11 h-11 rounded-full border ${icono.iconBorderColor} flex items-center justify-center ${icono.iconColor} ${icono.iconBg} shrink-0">
                                 <i class="fa-solid ${icono.icon}"></i>
@@ -176,6 +199,19 @@ export async function obtenerMovimientosHTML(type = null, mostrarFecha = true, l
 
     return movimientosHTML
 }
+
+// Al tocar cualquier movimiento de egreso en la lista, mostramos su comprobante
+document.addEventListener('click', (e) => {
+    const itemEgreso = e.target.closest('.item-movimiento-egreso');
+    if (itemEgreso && itemEgreso.dataset.comprobante) {
+        try {
+            const datos = JSON.parse(decodeURIComponent(itemEgreso.dataset.comprobante));
+            mostrarComprobanteModal(datos);
+        } catch (error) {
+            console.error('Error al abrir comprobante:', error);
+        }
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
 

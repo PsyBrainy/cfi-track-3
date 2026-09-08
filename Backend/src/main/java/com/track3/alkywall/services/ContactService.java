@@ -86,7 +86,7 @@ public class ContactService {
 
         return transfersByContact.entrySet().stream()
                 .sorted(Map.Entry.<DestinationContact, List<Transfer>>comparingByValue(Comparator.comparingInt(List::size)).reversed())
-                .limit(3)
+                .limit(4)
                 .toList();
     }
 }
