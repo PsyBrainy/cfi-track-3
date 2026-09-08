@@ -138,7 +138,6 @@
                     </div>
                     <i class="fa-solid fa-chevron-right text-red-300 text-xs group-hover:text-red-500 transition"></i>
                 </button>
-
             </div>
         </div>
         </div>
@@ -177,6 +176,62 @@
                         <span>Guardar</span>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Modal para eliminar cuenta -->
+        <div id="modalConfirmarEliminar" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
+            <div id="modalConfirmarEliminarContent" class="bg-white w-full rounded-t-[32px] p-6 pb-8 shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col gap-4 relative">
+                <div class="flex justify-between items-start mb-1">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-500 shrink-0">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-extrabold text-slate-900">¿Eliminar cuenta?</h3>
+                            <p class="text-xs text-slate-400">Podés recuperarla luego</p>
+                        </div>
+                    </div>
+                    <button id="btnCerrarModalConfirmarEliminar" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 transition shrink-0">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Tu cuenta quedará bloqueada y no podrás iniciar sesión nuevamente.
+                </p>
+
+                <!-- Aviso de recuperación -->
+                <div class="w-full flex items-start gap-2.5 bg-blue-50 border border-blue-100 text-blue-700 rounded-2xl px-4 py-3 text-left">
+                    <i class="fa-solid fa-circle-info text-xs shrink-0 mt-0.5"></i>
+                    <p class="text-[11px] font-medium leading-snug">
+                        Tu cuenta no se elimina de forma permanente. Si querés recuperarla, contactá a soporte dentro de los próximos 30 días.
+                    </p>
+                </div>
+
+                <div class="flex gap-3 mt-2">
+                    <button id="btnCancelarModalConfirmarEliminar" class="flex-1 h-12 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">
+                        Cancelar
+                    </button>
+                    <button id="btnConfirmarEliminarCuenta" class="flex-1 h-12 bg-red-500 text-white rounded-2xl font-bold text-sm hover:bg-red-600 transition shadow-md flex items-center justify-center gap-2">
+                        <span>Eliminar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals para eliminar cuenta -->
+        <div id="modalResultadoEliminar" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-end justify-center hidden opacity-0 transition-opacity duration-300 md:rounded-[32px] overflow-hidden">
+            <div id="modalResultadoEliminarContent" class="bg-white w-full rounded-t-[32px] p-6 pb-8 shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col items-center gap-3 relative text-center">
+                <div id="iconoResultadoEliminar" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-1">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3 id="tituloResultadoEliminar" class="text-lg font-extrabold text-slate-900">Cuenta eliminada</h3>
+                <p id="mensajeResultadoEliminar" class="text-xs text-slate-500 leading-relaxed">Tu cuenta fue eliminada correctamente.</p>
+
+                <button id="btnCerrarModalResultadoEliminar" class="w-full h-12 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-500 transition mt-3">
+                    Cerrar
+                </button>
             </div>
         </div>
 
