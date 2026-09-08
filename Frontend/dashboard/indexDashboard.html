@@ -86,9 +86,6 @@
                                 <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                                     ESTE MES
                                 </h3>
-                                <div id="iconoAcordeonGastos">
-                                    <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-300"></i>
-                                </div>
                             </div>
                         </div>
 
@@ -119,8 +116,13 @@
 
                         <!-- Pagos -->
                         <div id="seccionPagosResumen">
-                            <div class="flex justify-between items-center w-full pt-3 border-t border-slate-100">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Gastos por categoría</span>
+                            <div class="flex justify-between items-center w-full pt-4 border-t border-slate-100">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Gastos por categoría</span>
+                                    <div id="iconoAcordeonGastos" class="w-fit h-fit flex">
+                                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
                                 <span id="textoTotalGastos" class="text-xs font-bold text-slate-800">$ 0,00</span>
                             </div>
                             <div id="barraSegmentadaGastos" class="w-full h-2.5 flex rounded-full overflow-hidden bg-slate-100 transition-opacity duration-300 mt-3">
