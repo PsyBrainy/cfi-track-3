@@ -30,6 +30,17 @@ class DepositResponse {
 async function onInit(event) {
     const token = localStorage.getItem("token");
     if (token != null) {
+        // Si el usuario logueado es administrador, lo mandamos directo a su panel
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.role === 'ADMIN') {
+                window.location.href = "../admin/indexAdmin.html";
+                return;
+            }
+        } catch (e) {
+            console.error("Error al verificar rol:", e);
+        }
+
         let accountData = await getAccount();
         if (accountData) {
             mostrarInfo(accountData);
@@ -38,10 +49,31 @@ async function onInit(event) {
         if (contactosFrecuentes) {
             cargarContactosFrecuentes(contactosFrecuentes);
         }
+        let unreadCount = await getUnreadNotificationsCount();
+        actualizarBadgeNotificaciones(unreadCount);
     } else {
         // window.location.href = "../login/indexLogin.html"; // Comentado temporalmente si se quiere ver el mockup
     }
 }
+
+// Al volver atrás desde otra página o al volver a la pestaña, refresca el badge
+window.addEventListener('pageshow', async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        const unreadCount = await getUnreadNotificationsCount();
+        actualizarBadgeNotificaciones(unreadCount);
+    }
+});
+
+document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible') {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const unreadCount = await getUnreadNotificationsCount();
+            actualizarBadgeNotificaciones(unreadCount);
+        }
+    }
+});
 
 // Instancia para poder realizar peticiones HTTP
 const axiosInstance = typeof axios !== 'undefined' ? axios.create({
@@ -75,6 +107,27 @@ const getContactosFrecuentes = async () => {
     catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+const getUnreadNotificationsCount = async () => {
+    if (!axiosInstance) return 0;
+    try {
+        const response = await axiosInstance.get("/notifications/unread-count");
+        return response.data?.data?.unreadCount || 0;
+    } catch (error) {
+        console.error("Error al obtener contador de notificaciones:", error);
+        return 0;
+    }
+}
+
+function actualizarBadgeNotificaciones(unreadCount) {
+    const badge = document.getElementById('notificationBadge');
+    if (!badge) return;
+    if (unreadCount > 0) {
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
     }
 }
 
@@ -157,7 +210,8 @@ async function renderizarMovimientos(){
 
     listaMovimientos.innerHTML = '';
 
-    let movimientosHTML = await obtenerMovimientosHTML(null, false, 15);
+    // Mostramos solo los ultimos 5 movimientos en el dashboard
+    let movimientosHTML = await obtenerMovimientosHTML(null, false, 5);
 
     if (movimientosHTML === "") {
         // Mostrar mensaje vacío
@@ -322,8 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (seccionPagosResumen) {
                 seccionPagosResumen.innerHTML = `
                 <div class="flex justify-between items-center w-full pt-3 border-t border-slate-100">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pagos</span>
-                    <span class="text-[11px] font-semibold text-slate-400">Sin pagos este mes</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gastos por categoría</span>
+                    <span class="text-[11px] font-semibold text-slate-400">Sin gastos este mes</span>
                 </div>
             `;
             }
@@ -352,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const segmentoHTML = `<div class="h-full ${estilo.colorClass} transition-all duration-1000 ease-out" style="width: 0;" data-target-width="${porcentaje}%"></div>`;
             barraSegmentadaGastos.insertAdjacentHTML('beforeend', segmentoHTML);
 
+            // Inyecta la barra individual detallada
             const barraIndividualHTML = `
             <div class="flex flex-col gap-2 group">
                 <div class="flex justify-between items-end">
@@ -374,12 +429,14 @@ document.addEventListener('DOMContentLoaded', () => {
             contenedorBarras.insertAdjacentHTML('beforeend', barraIndividualHTML);
         });
 
+        // Anima las barras
         setTimeout(() => {
             document.querySelectorAll('#seccionAnalisisGastos [data-target-width]').forEach(barra => {
                 barra.style.width = barra.getAttribute('data-target-width');
             });
         }, 100);
 
+        // Control del acordeón
         let expandido = false;
         contenedorBarras.onclick = (e) => e.stopPropagation();
 
@@ -397,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => barraSegmentadaGastos.classList.remove('hidden'), 300);
             }
         };
-    }
+    };
 
     renderizarResumenMes();
 
@@ -495,6 +552,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const saldoStr = nuevoSaldo.toLocaleString('es-AR', { minimumFractionDigits: 2 });
                 const [enteros, decimales] = saldoStr.split(',');
                 saldoTotalElement.innerHTML = `$ ${enteros}<span class="text-xl opacity-80" id="saldoDecimales">,${decimales}</span>`;
+
+                // Actualizar resumen de ingresos/egresos del mes y movimientos recientes
+                renderizarResumenMes();
             }, 1500);
         });
 
