@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Definimos el HTML del menú desplegable
     const menuHTML = `
-        <!-- Overlay del Menú (Fondo oscurecido) -->
-        <div id="menu-overlay" class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 h-full"></div>
+        <!-- Overlay del Menú (Fondo oscurecido dentro de la app) -->
+        <div id="menu-overlay" class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
         
-        <!-- Menú Lateral (Drawer) -->
-        <aside id="menu-drawer" class="fixed top-0 left-0 h-full w-[260px] bg-white z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-[10px_0_40px_rgba(0,0,0,0.1)] flex flex-col">
+        <!-- Menú Lateral (Drawer) con absolute para que no se vaya al costado en la pc -->
+        <aside id="menu-drawer" class="absolute top-0 left-0 h-full w-[260px] bg-white z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-[10px_0_40px_rgba(0,0,0,0.1)] flex flex-col md:rounded-l-[32px]">
             <!-- Menú Header -->
             <div class="flex justify-between items-center p-6 border-b border-slate-100">
                 <div class="flex items-center gap-2">

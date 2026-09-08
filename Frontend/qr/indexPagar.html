@@ -187,7 +187,11 @@
                         </div>
                     </div>
 
-                    <a href="../dashboard/indexDashboard.html" class="w-full h-14 bg-blue-600 text-white rounded-2xl font-extrabold text-sm flex items-center justify-center hover:bg-blue-700 transition shadow-md">
+                    <button id="btnVerComprobantePago" class="w-full h-14 bg-blue-600 text-white rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition shadow-md cursor-pointer mb-3">
+                        <i class="fa-solid fa-file-invoice"></i> Ver comprobante
+                    </button>
+
+                    <a href="../dashboard/indexDashboard.html" class="w-full h-12 bg-slate-100 text-blue-600 rounded-2xl font-bold text-sm flex items-center justify-center hover:bg-slate-200 transition">
                         Volver al Inicio
                     </a>
                 </div>
@@ -198,6 +202,7 @@
     </main>
 
     <script src="../fx.js"></script>
+    <script type="module" src="../comprobante/comprobanteModal.js"></script>
     <script src="srcPagar.js"></script>
 </body>
 </html>

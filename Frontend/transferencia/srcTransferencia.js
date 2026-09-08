@@ -422,6 +422,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                     path: '../assets/lottie_success.json'
                 });
             }
+
+            // Al tocar en ver comprobante, abro el modal con los datos de esta transferencia
+            const btnVerComprobante = document.getElementById('btnVerComprobanteTransferencia');
+            if (btnVerComprobante) {
+                btnVerComprobante.onclick = () => {
+                    if (window.mostrarComprobanteModal) {
+                        window.mostrarComprobanteModal({
+                            tipo: 'TRANSFERENCIA',
+                            monto: montoActual,
+                            destinatario: nombreDestinoFinal,
+                            cuentaDestino: destinatarioActual.account?.accountNumber || destinatarioActual.alias || '',
+                            fecha: new Date(),
+                            nroOperacion: transferencia?.data?.data?.id || null
+                        });
+                    }
+                };
+            }
         }
         // }, 1500);
     });
