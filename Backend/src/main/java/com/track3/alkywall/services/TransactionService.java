@@ -7,7 +7,7 @@ import com.track3.alkywall.models.Category;
 import com.track3.alkywall.models.Transaction;
 import com.track3.alkywall.repositories.CategoryRepository;
 import com.track3.alkywall.repositories.TransactionRepository;
-import com.track3.alkywall.services.models.TransactionMonthSummary;
+import com.track3.alkywall.services.models.TransactionTypeAmountSummary;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +21,11 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountService accountService;
     private final CategoryRepository categoryRepository;
-    private final UserService userService;
 
-    public TransactionService(TransactionRepository transactionRepository, AccountService accountService, CategoryRepository categoryRepository, UserService userService) {
+    public TransactionService(TransactionRepository transactionRepository, AccountService accountService, CategoryRepository categoryRepository) {
         this.transactionRepository = transactionRepository;
         this.accountService = accountService;
         this.categoryRepository = categoryRepository;
-        this.userService = userService;
     }
 
     @Transactional
@@ -75,8 +73,8 @@ public class TransactionService {
         }
     }
 
-    public List<TransactionMonthSummary> getMonthSummary(String authenticatedUserEmail){
-        return transactionRepository.getMonthSummaryByAccountId(
+    public List<TransactionTypeAmountSummary> getMonthIncomeExpense(String authenticatedUserEmail){
+        return transactionRepository.getMonthIncomeExpenseByAccountId(
                 accountService.getAccountByUserEmail(authenticatedUserEmail).getId()
         );
     }

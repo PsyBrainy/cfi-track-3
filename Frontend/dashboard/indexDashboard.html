@@ -19,10 +19,10 @@
 </head>
 <body class="bg-slate-50 flex items-center justify-center h-[100dvh] overflow-hidden md:h-screen md:overflow-auto font-sans opacity-0">
 
-    <main class="w-full md:max-w-[380px] bg-gradient-to-b from-[#f0f6ff] to-white md:rounded-[32px] p-6 md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-[100dvh] md:h-[820px] md:my-8 overflow-hidden relative">
+    <main class="w-full md:max-w-[380px] bg-gradient-to-b from-[#f0f6ff] to-white md:rounded-[32px] p-6 md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-[100dvh] md:h-[820px] md:my-8 overflow-y-auto relative">
         <div class="fade-in flex flex-col h-full">
         <!-- Cabecera de la pantalla -->
-        <header class="relative flex justify-between items-center pt-2 pb-2">
+        <header class="relative flex justify-between items-center pt-2 pb-2 shrink-0">
             <!-- Botón Menú con ID para JS -->
             <button id="open-menu-btn" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
                 <i class="fa-solid fa-bars"></i>
@@ -45,7 +45,7 @@
         
 
         <!-- Tarjeta de Saldo -->
-        <section class="relative mt-6 p-6 rounded-[24px] bg-gradient-to-br from-blue-600 to-blue-400 text-white shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] overflow-hidden">
+        <section class="relative mt-6 p-6 rounded-[24px] bg-gradient-to-br from-blue-600 to-blue-400 text-white shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] overflow-hidden shrink-0">
             <div class="absolute -right-4 -top-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
             <p class="text-[10px] font-bold text-blue-50 flex items-center gap-1.5 uppercase tracking-wide">
                 Saldo Total Disponible <i class="fa-solid fa-chevron-down text-[9px]"></i>
@@ -57,7 +57,7 @@
         </section>
 
         <!-- Enviar Dinero A -->
-        <section class="relative mt-8">
+        <section class="relative mt-8 shrink-0">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
                     ENVIAR DINERO A <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
@@ -75,29 +75,67 @@
             </div>
         </section>
 
-                <section id="seccionAnalisisGastos" class="relative mt-6">
-            <div id="tarjetaAnalisisGastos" class="bg-white border border-slate-200 rounded-[24px] shadow-sm overflow-hidden transition-all duration-300 cursor-pointer">
-                <div class="w-full p-5 flex flex-col gap-3 hover:bg-slate-50 transition relative">
-                    <div class="flex justify-between items-center w-full">
-                        <div class="flex items-center gap-2">
-                            <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                                GASTOS DEL MES
-                            </h3>
-                            <i id="iconoAcordeonGastos" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-300"></i>
+            <section id="seccionAnalisisGastos" class="relative mt-6 shrink-0">
+                <div id="tarjetaAnalisisGastos" class="bg-white border border-slate-200 rounded-[24px] shadow-sm overflow-hidden transition-all duration-300 cursor-pointer hover:bg-slate-50">
+                    <div class="w-full p-5 flex flex-col gap-4 relative">
+
+                        <!-- Encabezado -->
+                        <div class="flex justify-between items-center w-full">
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                    ESTE MES
+                                </h3>
+                                <div id="iconoAcordeonGastos">
+                                    <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-300"></i>
+                                </div>
+                            </div>
                         </div>
-                        <span id="textoTotalGastos" class="text-xs font-bold text-slate-800">$ 0,00</span>
+
+                        <!-- Ingresos / Egresos -->
+                        <div id="seccionIngresosEgresos" class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full border border-green-100 flex items-center justify-center text-green-500 bg-green-50 shrink-0 text-xs">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-slate-500">Ingresos</p>
+                                    <p id="montoIngresosMes" class="text-xs font-extrabold text-green-600">$ 0,00</p>
+                                </div>
+                            </div>
+
+                            <div class="w-px h-8 bg-slate-100"></div>
+
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full border border-red-100 flex items-center justify-center text-red-500 bg-red-50 shrink-0 text-xs">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-slate-500">Egresos</p>
+                                    <p id="montoEgresosMes" class="text-xs font-extrabold text-red-500">$ 0,00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pagos -->
+                        <div id="seccionPagosResumen">
+                            <div class="flex justify-between items-center w-full pt-3 border-t border-slate-100">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pagos</span>
+                                <span id="textoTotalGastos" class="text-xs font-bold text-slate-800">$ 0,00</span>
+                            </div>
+                            <div id="barraSegmentadaGastos" class="w-full h-2.5 flex rounded-full overflow-hidden bg-slate-100 transition-opacity duration-300 mt-3">
+                            </div>
+                        </div>
                     </div>
-                    <div id="barraSegmentadaGastos" class="w-full h-2.5 flex rounded-full overflow-hidden bg-slate-100 transition-opacity duration-300">
+
+                    <!-- Detalle de pagos por categoría (acordeón) -->
+                    <div id="contenedorBarrasGastos" class="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out px-5 pb-5 mt-0 flex flex-col gap-4">
                     </div>
                 </div>
-                <div id="contenedorBarrasGastos" class="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out px-5 pb-5 mt-0 flex flex-col gap-4">
-                </div>
-            </div>
-        </section>
+            </section>
 
         <!-- Movimientos Recientes -->
-        <section class="relative mt-8 flex-1 flex flex-col min-h-0">
-            <div class="flex justify-between items-center mb-4">
+        <section class="relative mt-8 flex-1 flex flex-col min-h-[300px] mb-12">
+            <div class="flex justify-between items-center mb-4 shrink-0">
                 <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                     MOVIMIENTOS RECIENTES
                 </h3>
@@ -106,53 +144,11 @@
                 </a>
             </div>
 
-            <div id="listaMovimientos" class="flex-1 overflow-y-auto scrollbar-hide pb-6 flex flex-col gap-3 -mx-2 px-2">
-                <!--<div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full border border-pink-100 flex items-center justify-center text-pink-500 bg-pink-50">
-                            <i class="fa-solid fa-compact-disc text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                NETFLIX <span class="w-1 h-1 bg-pink-500 rounded-full"></span>
-                            </p>
-                            <p class="text-[10px] text-slate-500 mt-0.5">Compra</p>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold text-slate-800 tracking-wide">- $ 12.500,00</span>
-                </div>
-                <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full border border-sky-100 flex items-center justify-center text-sky-500 bg-sky-50">
-                            <i class="fa-brands fa-steam-symbol text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                STEAM <span class="w-1 h-1 bg-sky-500 rounded-full"></span>
-                            </p>
-                            <p class="text-[10px] text-slate-500 mt-0.5">Compra de software</p>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold text-slate-800 tracking-wide">- $ 19.640,00</span>
-                </div>
-                <div class="p-4 rounded-[20px] bg-white border border-slate-200 shadow-sm flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full border border-blue-100 flex items-center justify-center text-blue-600 bg-blue-50">
-                            <i class="fa-solid fa-lock text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                Transferencia Recibida <span class="w-1 h-1 bg-blue-600 rounded-full"></span>
-                            </p>
-                            <p class="text-[10px] text-slate-500 mt-0.5">De: Franco Colleti (CVU)</p>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold text-blue-600 tracking-wide">+ $ 19900,00</span>
-                </div>-->
+            <div id="listaMovimientos" class="flex-1 overflow-y-auto scrollbar-hide pb-24 flex flex-col gap-3 -mx-2 px-2 min-h-0">
             </div>
 
             <!-- Mensaje de estado vacío (Se oculta si hay datos) -->
-            <div id="msgHistorialVacio" class="hidden flex-col items-center justify-center h-full opacity-60">
+            <div id="msgHistorialVacio" class="hidden flex-col items-center mt-8 h-full opacity-60">
                 <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-slate-400 text-2xl mb-4">
                     <i class="fa-solid fa-receipt"></i>
                 </div>

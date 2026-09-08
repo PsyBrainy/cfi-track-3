@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class DataInitializer {
     @Bean
-    public CommandLineRunner initRolesAndCategories(
+    public CommandLineRunner initDatabase(
             RoleRepository roleRepository,
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
