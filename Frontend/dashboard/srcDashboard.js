@@ -291,7 +291,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const obtenerResumenIngresosEgresosMes = async () => {
+        if (!axiosInstance) return null;
 
+        try {
+            const response = await axiosInstance.get("/transaction/month-income-expense");
+            return response.data.data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
+    const obtenerResumenPagosMes = async () => {
+        if (!axiosInstance) return null;
+
+        try {
+            const response = await axiosInstance.get("/transaction/payment/expenses/month");
+            return response.data.data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
 
     // Mapa de colores e iconos por categoría
     const ESTILOS_CATEGORIAS = {
@@ -305,89 +327,107 @@ document.addEventListener('DOMContentLoaded', () => {
         'OTROS': { colorClass: 'bg-slate-500', icon: 'fa-box-archive', iconBg: 'bg-slate-50', iconColor: 'text-slate-500' }
     };
 
-    // Renderiza el análisis de gastos con los datos reales del usuario
-    const renderizarAnalisisGastos = async () => {
-        const contenedorBarras = document.getElementById('contenedorBarrasGastos');
-        const barraSegmentadaGastos = document.getElementById('barraSegmentadaGastos');
-        const textoTotalGastos = document.getElementById('textoTotalGastos');
+    // Renderiza el análisis del mes con gastos e ingresos y egresos con los datos reales del usuario
+    const renderizarResumenMes = async () => {
         const tarjetaAnalisisGastos = document.getElementById('tarjetaAnalisisGastos');
+        const seccionIngresosEgresos = document.getElementById('seccionIngresosEgresos');
+        const seccionPagosResumen = document.getElementById('seccionPagosResumen');
+        const contenedorBarras = document.getElementById('contenedorBarrasGastos');
         const iconoAcordeonGastos = document.getElementById('iconoAcordeonGastos');
 
-        if (!contenedorBarras || !barraSegmentadaGastos) return;
+        if (!tarjetaAnalisisGastos) return;
 
-        let listaGastos = [];
-        const token = localStorage.getItem('token');
+        const resumen= await obtenerResumenIngresosEgresosMes();
+        const listaGastos = await obtenerResumenPagosMes();
 
-        if (token) {
-            try {
-                const res = await fetch('http://localhost:8080/api/transaction/payment/expenses/month', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success && data.data) {
-                        listaGastos = data.data;
-                    }
-                }
-            } catch (err) {
-                console.error('Error al cargar gastos del mes:', err);
-            }
+        const totalCredit = resumen?.totalCreditAmount ?? 0;
+        const totalDebit = resumen?.totalDebitAmount ?? 0;
+        const hayMovimientos = totalCredit > 0 || totalDebit > 0;
+        const hayPagos = listaGastos.length > 0;
+
+        // Caso: no hay absolutamente nada este mes -> empty state total
+        if (!hayMovimientos && !hayPagos) {
+            tarjetaAnalisisGastos.classList.remove('cursor-pointer', 'hover:bg-slate-50');
+            tarjetaAnalisisGastos.onclick = null;
+            tarjetaAnalisisGastos.innerHTML = `
+            <div class="w-full p-4 flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-sm shrink-0">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold text-slate-800">No hay movimientos registrados este mes</span>
+                    <span class="text-[11px] font-medium text-slate-400">Tu análisis del mes aparecerá aquí.</span>
+                </div>
+            </div>
+        `;
+            return;
         }
+
+        // Ingresos / Egresos: siempre se muestran si hay algún movimiento
+        const ingresos = document.getElementById('montoIngresosMes');
+        const egresos = document.getElementById('montoEgresosMes');
+        if (ingresos && egresos) {
+            ingresos.textContent = `$ ${totalCredit.toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
+            egresos.textContent = `$ ${totalDebit.toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
+        }
+
+        // Pagos: si no hay pagos, mostramos aviso
+        if (!hayPagos) {
+            if (seccionPagosResumen) {
+                seccionPagosResumen.innerHTML = `
+                <div class="flex justify-between items-center w-full pt-3 border-t border-slate-100">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gastos por categoría</span>
+                    <span class="text-[11px] font-semibold text-slate-400">Sin gastos este mes</span>
+                </div>
+            `;
+            }
+            tarjetaAnalisisGastos.classList.remove('cursor-pointer', 'hover:bg-slate-50');
+            tarjetaAnalisisGastos.onclick = null;
+            if (iconoAcordeonGastos) iconoAcordeonGastos.classList.add('hidden');
+            return;
+        }
+
+        // Si hay pagos se renderizan barras y detalles por categoría
+        const barraSegmentadaGastos = document.getElementById('barraSegmentadaGastos');
+        const textoTotalGastos = document.getElementById('textoTotalGastos');
+        if (!barraSegmentadaGastos || !textoTotalGastos || !contenedorBarras) return;
+
+        const totalGastos = listaGastos.reduce((acc, item) => acc + parseFloat(item.amount), 0);
+        textoTotalGastos.innerText = `Total: $ ${totalGastos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
 
         contenedorBarras.innerHTML = '';
         barraSegmentadaGastos.innerHTML = '';
 
-        // Si aún no hay gastos reales registrados en el mes
-        if (listaGastos.length === 0) {
-            textoTotalGastos.innerText = "Total: $ 0,00";
-            barraSegmentadaGastos.innerHTML = `<div class="w-full h-full bg-slate-200/80 rounded-full"></div>`;
-            contenedorBarras.innerHTML = `
-                <div class="p-3 bg-slate-50 rounded-xl flex items-center gap-3 border border-slate-100">
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xs shrink-0">
-                        <i class="fa-solid fa-receipt"></i>
+        listaGastos.forEach((item) => {
+            const estilo = ESTILOS_CATEGORIAS[item.category] || ESTILOS_CATEGORIAS['OTROS'];
+            const porcentaje = item.percentage;
+            const montoFormateado = parseFloat(item.amount).toLocaleString('es-AR', { minimumFractionDigits: 2 });
+
+            const segmentoHTML = `<div class="h-full ${estilo.colorClass} transition-all duration-1000 ease-out" style="width: 0;" data-target-width="${porcentaje}%"></div>`;
+            barraSegmentadaGastos.insertAdjacentHTML('beforeend', segmentoHTML);
+
+            // Inyecta la barra individual detallada
+            const barraIndividualHTML = `
+            <div class="flex flex-col gap-2 group">
+                <div class="flex justify-between items-end">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full ${estilo.iconBg} ${estilo.iconColor} flex items-center justify-center text-[10px]">
+                            <i class="fa-solid ${estilo.icon}"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-700">${item.displayName}</span>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-slate-700">Sin pagos registrados este mes</span>
-                        <span class="text-[10px] text-slate-400">Tus pagos aparecerán categorizados aquí.</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-slate-400">$ ${montoFormateado}</span>
+                        <span class="text-xs font-extrabold text-slate-800">${porcentaje}%</span>
                     </div>
                 </div>
-            `;
-        } else {
-            const totalGastos = listaGastos.reduce((acc, item) => acc + parseFloat(item.amount), 0);
-            textoTotalGastos.innerText = `Total: $ ${totalGastos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
-
-            listaGastos.forEach((item) => {
-                const estilo = ESTILOS_CATEGORIAS[item.category] || ESTILOS_CATEGORIAS['OTROS'];
-                const porcentaje = item.percentage;
-                const montoFormateado = parseFloat(item.amount).toLocaleString('es-AR', { minimumFractionDigits: 2 });
-
-                // Inyecta el segmento en la barra principal
-                const segmentoHTML = `<div class="h-full ${estilo.colorClass} transition-all duration-1000 ease-out" style="width: 0%;" data-target-width="${porcentaje}%"></div>`;
-                barraSegmentadaGastos.insertAdjacentHTML('beforeend', segmentoHTML);
-
-                // Inyecta la barra individual detallada
-                const barraIndividualHTML = `
-                    <div class="flex flex-col gap-2 group">
-                        <div class="flex justify-between items-end">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full ${estilo.iconBg} ${estilo.iconColor} flex items-center justify-center text-[10px]">
-                                    <i class="fa-solid ${estilo.icon}"></i>
-                                </div>
-                                <span class="text-xs font-bold text-slate-700">${item.displayName}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold text-slate-400">$ ${montoFormateado}</span>
-                                <span class="text-xs font-extrabold text-slate-800">${porcentaje}%</span>
-                            </div>
-                        </div>
-                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div class="h-full ${estilo.colorClass} rounded-full transition-all duration-1000 ease-out" style="width: 0%;" data-target-width="${porcentaje}%"></div>
-                        </div>
-                    </div>
-                `;
-                contenedorBarras.insertAdjacentHTML('beforeend', barraIndividualHTML);
-            });
-        }
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full ${estilo.colorClass} rounded-full transition-all duration-1000 ease-out" style="width: 0;" data-target-width="${porcentaje}%"></div>
+                </div>
+            </div>
+        `;
+            contenedorBarras.insertAdjacentHTML('beforeend', barraIndividualHTML);
+        });
 
         // Anima las barras
         setTimeout(() => {
@@ -398,42 +438,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Control del acordeón
         let expandido = false;
-        const detalleExtra = document.getElementById('detalleExtraAcordeon');
-        if (detalleExtra) {
-            detalleExtra.onclick = (e) => e.stopPropagation();
-        }
+        contenedorBarras.onclick = (e) => e.stopPropagation();
 
         tarjetaAnalisisGastos.onclick = () => {
             expandido = !expandido;
             if (expandido) {
                 iconoAcordeonGastos.classList.add('rotate-180');
+                contenedorBarras.classList.remove('max-h-0', 'opacity-0', 'mt-0', 'overflow-hidden');
+                contenedorBarras.classList.add('max-h-[170px]', 'opacity-100', 'mt-2', 'overflow-y-auto');
                 barraSegmentadaGastos.classList.add('hidden');
-                if (detalleExtra) {
-                    detalleExtra.classList.remove('hidden');
-                    setTimeout(() => {
-                        detalleExtra.classList.remove('max-h-0', 'opacity-0');
-                        detalleExtra.classList.add('max-h-[600px]', 'opacity-100');
-                    }, 10);
-                }
             } else {
                 iconoAcordeonGastos.classList.remove('rotate-180');
-                if (detalleExtra) {
-                    detalleExtra.classList.add('max-h-0', 'opacity-0');
-                    detalleExtra.classList.remove('max-h-[600px]', 'opacity-100');
-                    setTimeout(() => {
-                        detalleExtra.classList.add('hidden');
-                        barraSegmentadaGastos.classList.remove('hidden');
-                    }, 300);
-                } else {
-                    barraSegmentadaGastos.classList.remove('hidden');
-                }
+                contenedorBarras.classList.add('max-h-0', 'opacity-0', 'mt-0', 'overflow-hidden');
+                contenedorBarras.classList.remove('max-h-[170px]', 'opacity-100', 'mt-2', 'overflow-y-auto');
+                setTimeout(() => barraSegmentadaGastos.classList.remove('hidden'), 300);
             }
         };
     };
 
-    renderizarResumenIngresosEgresosMes();
-    renderizarAnalisisGastos();
-
+    renderizarResumenMes();
 
     // CARGAR SALDO (Depósito)
 
@@ -531,8 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 saldoTotalElement.innerHTML = `$ ${enteros}<span class="text-xl opacity-80" id="saldoDecimales">,${decimales}</span>`;
 
                 // Actualizar resumen de ingresos/egresos del mes y movimientos recientes
-                await renderizarResumenIngresosEgresosMes();
-                await renderizarMovimientos();
+                renderizarResumenMes();
             }, 1500);
         });
 
@@ -549,30 +571,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Historial de movimientos
     renderizarMovimientos();
 });
-
-const obtenerResumenIngresosEgresosMes = async () => {
-    if (!axiosInstance) return null;
-
-    try {
-        const response = await axiosInstance.get("/transaction/month-income-expense");
-        return response.data.data;
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-}
-
-async function renderizarResumenIngresosEgresosMes() {
-    const elIngresos = document.getElementById('montoIngresosMes');
-    const elEgresos = document.getElementById('montoEgresosMes');
-    if (!elIngresos || !elEgresos) return;
-
-    const resumen = await obtenerResumenIngresosEgresosMes();
-    if (!resumen) return;
-
-    const ingresosFormateado = resumen.totalCreditAmount.toLocaleString('es-AR', { minimumFractionDigits: 2 });
-    const egresosFormateado = resumen.totalDebitAmount.toLocaleString('es-AR', { minimumFractionDigits: 2 });
-
-    elIngresos.textContent = `$ ${ingresosFormateado}`;
-    elEgresos.textContent = `$ ${egresosFormateado}`;
-}

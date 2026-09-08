@@ -160,7 +160,7 @@ export async function obtenerMovimientosHTML(type = null, mostrarFecha = true, l
                             </div>
                             <div>
                                 <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                    ${titulo} <span class="w-1 h-1 bg-blue-600 rounded-full"></span>
+                                    ${titulo}
                                 </p>
                                 <p class="text-[10px] text-slate-500 mt-0.5">
                                     ${desc}
