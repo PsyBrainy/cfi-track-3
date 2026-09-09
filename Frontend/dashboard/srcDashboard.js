@@ -46,9 +46,8 @@ async function onInit(event) {
             mostrarInfo(accountData);
         }
         let contactosFrecuentes = await getContactosFrecuentes();
-        if (contactosFrecuentes) {
-            cargarContactosFrecuentes(contactosFrecuentes);
-        }
+        cargarContactosFrecuentes(contactosFrecuentes || []);
+
         let unreadCount = await getUnreadNotificationsCount();
         actualizarBadgeNotificaciones(unreadCount);
     } else {
@@ -182,7 +181,16 @@ function ocultarMensaje(elemento) {
  */
 function cargarContactosFrecuentes(contactosBD) {
     const contenedor = document.getElementById('listaContactos');
+    const seccion = document.getElementById('seccionTransferenciasFrecuentes');
     if (!contenedor) return;
+
+    // Si no hay contactos frecuentes, ocultamos toda la sección
+    if (!contactosBD || contactosBD.length === 0) {
+        if (seccion) seccion.classList.add('hidden');
+        return;
+    }
+
+    if (seccion) seccion.classList.remove('hidden');
 
     contactosBD.forEach(contacto => {
         const iniciales = (contacto.firstName.charAt(0) + contacto.lastName.charAt(0)).toUpperCase();
