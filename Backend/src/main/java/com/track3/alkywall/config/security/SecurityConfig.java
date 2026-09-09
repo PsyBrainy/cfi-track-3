@@ -1,5 +1,7 @@
 package com.track3.alkywall.config.security;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,8 +15,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -26,6 +26,7 @@ public class SecurityConfig {
             JwtAccessDeniedHandler accessDeniedHandler
     ) throws Exception{
         http
+                .cors(org.springframework.security.config.Customizer.withDefaults())
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(e -> e
@@ -33,9 +34,19 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/user").authenticated()
-                        .requestMatchers("/api/auth/admin").hasRole("ADMIN")
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/auth/**", "/error", "/Frontend/**").permitAll()
+                        .requestMatchers(
+                                "/api/user/identifier/**",
+                                "/api/user/current",
+                                "/api/user/block/current",
+                                "/api/account/**",
+                                "/api/transaction/**",
+                                "/api/contacts/**",
+                                "/api/dashboard/**",
+                                "/api/notifications/**"
+                        ).authenticated()
+                        .requestMatchers("/api/user/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

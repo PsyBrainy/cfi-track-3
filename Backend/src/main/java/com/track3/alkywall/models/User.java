@@ -42,6 +42,9 @@ public class User {
     @Column(nullable = false)
     LocalDateTime createdAt;
 
+    @OneToOne(mappedBy = "user")
+    private Account account;
+
     public User(String firstName, String lastName, String email, String password, String dni, Role role){
         this.firstName = firstName;
         this.lastName = lastName;

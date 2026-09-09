@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AlkyWall - Cobrar con QR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .fade-in {
+            animation: fadeInScreen 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeInScreen {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .monto-input {
+            all: unset;
+            width: 100%;
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .monto-input::placeholder { color: #cbd5e1; }
+    </style>
+</head>
+<body class="bg-slate-50 flex items-center justify-center h-[100dvh] overflow-hidden md:h-screen md:overflow-auto opacity-0 transition-opacity duration-100 ease-in-out">
+    
+    <main class="w-full md:max-w-[380px] bg-[#f8fafc] md:rounded-[32px] p-6 md:shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-[100dvh] md:h-[820px] md:my-8 relative overflow-hidden">
+        
+        <!-- Cabecera -->
+        <header class="relative flex justify-between items-center pt-2 pb-4 shrink-0 z-10">
+            <button id="btnVolver" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-600 hover:bg-slate-50 transition" onclick="history.back()">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span class="text-slate-900 text-lg font-extrabold">Cobrar con QR</span>
+            <div class="w-10 h-10"></div>
+        </header>
+
+        <!-- Formulario de Cobro -->
+        <div id="pasoMonto" class="fade-in w-full flex-1 flex flex-col justify-between overflow-y-auto">
+            
+            <div class="flex flex-col items-center mt-4">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">¿Cuánto quieres cobrar?</span>
+                
+                <!-- Input de Monto -->
+                <div class="flex items-center justify-center w-full relative mb-6">
+                    <span class="text-2xl font-bold text-slate-400 absolute left-6 top-1/2 -translate-y-1/2">$</span>
+                    <input type="number" id="inputMontoCobro" placeholder="0.00" class="monto-input" autofocus step="any" min="1">
+                </div>
+
+                <!-- Selector de Categoría / Rubro -->
+                <div class="w-full mb-4">
+                    <label for="selectCategoria" class="block text-xs font-bold text-slate-600 mb-2">Rubro / Categoría del cobro</label>
+                    <div class="relative">
+                        <select id="selectCategoria" class="w-full h-12 bg-white border border-slate-200 rounded-2xl px-4 text-sm font-semibold text-slate-800 appearance-none focus:outline-none focus:border-blue-500 shadow-sm">
+                            <option value="COMIDA">🍽️ Comida y Restaurantes</option>
+                            <option value="SERVICIOS">💡 Servicios e Impuestos</option>
+                            <option value="SUPERMERCADO">🛒 Supermercados y Almacén</option>
+                            <option value="TRANSPORTE">🚌 Transporte y Combustible</option>
+                            <option value="ENTRETENIMIENTO">🎟️ Entretenimiento y Salidas</option>
+                            <option value="FARMACIA_SALUD">💊 Farmacia y Salud</option>
+                            <option value="INDUMENTARIA">👕 Ropa y Calzado</option>
+                            <option value="OTROS">📦 Otros gastos</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Input opcional: Nombre del comercio o concepto -->
+                <div class="w-full mb-4">
+                    <label for="inputDetalleCobro" class="block text-xs font-bold text-slate-600 mb-2">Concepto o Comercio (opcional)</label>
+                    <input type="text" id="inputDetalleCobro" placeholder="Ej: Bar Pepe / Mesa 4" maxlength="100" class="w-full h-12 bg-white border border-slate-200 rounded-2xl px-4 text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 shadow-sm">
+                </div>
+
+                <!-- Info de cuenta del cobrador -->
+                <div class="w-full bg-blue-50/60 border border-blue-100 rounded-2xl p-3 flex items-center gap-3 mt-2">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs shrink-0">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div class="flex flex-col overflow-hidden">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Recibirás en tu cuenta</span>
+                        <span id="txtAliasCobrador" class="text-xs font-bold text-slate-700 truncate">Cargando cuenta...</span>
+                    </div>
+                </div>
+
+            </div>
+            
+            <button id="btnGenerarQR" class="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-[20px] font-extrabold text-base my-4 transition hover:scale-[1.02] shadow-[0_8px_20px_rgba(37,99,235,0.4)] opacity-50 cursor-not-allowed" disabled>
+                Generar QR
+            </button>
+        </div>
+
+        <!-- Paso QR Generado -->
+        <div id="pasoQR" class="hidden fade-in w-full flex-1 flex flex-col items-center justify-between">
+            
+            <div class="w-full bg-white rounded-3xl p-5 shadow-md border border-slate-100 flex flex-col items-center mt-1">
+                <span class="text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">Total a cobrar</span>
+                <span id="montoFinal" class="text-slate-900 font-extrabold text-3xl mb-1">$ 0,00</span>
+                
+                <!-- Badge de Categoría y Detalle -->
+                <div class="flex items-center gap-2 mb-3">
+                    <span id="badgeCategoria" class="px-3 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-bold">Comida</span>
+                    <span id="txtDetalleResumen" class="text-xs font-medium text-slate-500 truncate max-w-[150px]"></span>
+                </div>
+
+                <!-- Contenedor del QR -->
+                <div class="w-48 h-48 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center relative p-2 shadow-inner">
+                    <img id="imgQR" src="" alt="QR Code" class="w-full h-full rounded-xl object-contain">
+                    
+                    <!-- Logo centrado en el QR -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md border border-slate-100">
+                            <i class="fa-solid fa-wallet text-blue-600 text-base"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-[11px] font-medium text-slate-400 text-center mt-3">
+                    Mostrá este código o descargalo para enviarlo.
+                </p>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="w-full flex flex-col gap-2 pb-2 pt-2">
+                <button id="btnDescargarQR" class="w-full h-12 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-download text-xs"></i> Descargar QR
+                </button>
+                <div class="w-full flex gap-2">
+                    <button id="btnNuevoCobro" class="flex-1 h-11 bg-slate-100 text-slate-700 rounded-xl font-bold text-xs hover:bg-slate-200 transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-arrow-rotate-left text-xs"></i> Modificar
+                    </button>
+                    <a href="../dashboard/indexDashboard.html" class="flex-1 h-11 bg-slate-100 text-slate-700 rounded-xl font-bold text-xs hover:bg-slate-200 transition flex items-center justify-center">
+                        Finalizar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../fx.js"></script>
+    <script src="srcCobrar.js"></script>
+</body>
+</html>
