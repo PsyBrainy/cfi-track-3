@@ -176,6 +176,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 vistaConfirmacion.classList.add('hidden');
                 vistaExito.classList.remove('hidden');
+
+                // Al tocar en ver comprobante, abro el modal con los datos de este pago
+                const btnVerComprobantePago = document.getElementById('btnVerComprobantePago');
+                if (btnVerComprobantePago) {
+                    btnVerComprobantePago.onclick = () => {
+                        if (window.mostrarComprobanteModal) {
+                            window.mostrarComprobanteModal({
+                                tipo: 'PAGO',
+                                monto: datosPagoActual.amount,
+                                destinatario: datosPagoActual.name || datosPagoActual.destinationAccount,
+                                cuentaDestino: datosPagoActual.destinationAccount,
+                                categoria: datosPagoActual.category || 'Varios',
+                                fecha: new Date(),
+                                nroOperacion: data?.data?.id || null
+                            });
+                        }
+                    };
+                }
             } else {
                 boxErrorPago.innerText = data.message || 'Error al procesar el pago. Verifica tu saldo.';
                 boxErrorPago.classList.remove('hidden');

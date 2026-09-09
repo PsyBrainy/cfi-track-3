@@ -62,7 +62,115 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     };
-    await cargarUsuario();
+
+    // Eliminar Cuenta
+    const modalConfirmarEliminar = document.getElementById('modalConfirmarEliminar');
+    const modalConfirmarEliminarContent = document.getElementById('modalConfirmarEliminarContent');
+    const btnCerrarModalConfirmarEliminar = document.getElementById('btnCerrarModalConfirmarEliminar');
+    const btnCancelarModalConfirmarEliminar = document.getElementById('btnCancelarModalConfirmarEliminar');
+    const btnConfirmarEliminarCuenta = document.getElementById('btnConfirmarEliminarCuenta');
+
+    const modalResultadoEliminar = document.getElementById('modalResultadoEliminar');
+    const modalResultadoEliminarContent = document.getElementById('modalResultadoEliminarContent');
+    const btnCerrarModalResultadoEliminar = document.getElementById('btnCerrarModalResultadoEliminar');
+    const iconoResultadoEliminar = document.getElementById('iconoResultadoEliminar');
+    const tituloResultadoEliminar = document.getElementById('tituloResultadoEliminar');
+    const mensajeResultadoEliminar = document.getElementById('mensajeResultadoEliminar');
+
+    let eliminacionExitosa = false;
+
+    const abrirModalConfirmarEliminar = () => {
+        if (!modalConfirmarEliminar) return;
+        modalConfirmarEliminar.classList.remove('hidden');
+        setTimeout(() => {
+            modalConfirmarEliminar.classList.remove('opacity-0');
+            if (modalConfirmarEliminarContent) modalConfirmarEliminarContent.classList.remove('translate-y-full');
+        }, 10);
+    };
+
+    const cerrarModalConfirmarEliminar = () => {
+        if (!modalConfirmarEliminar) return;
+        modalConfirmarEliminar.classList.add('opacity-0');
+        if (modalConfirmarEliminarContent) modalConfirmarEliminarContent.classList.add('translate-y-full');
+        setTimeout(() => {
+            modalConfirmarEliminar.classList.add('hidden');
+        }, 300);
+    };
+
+    const mostrarResultadoEliminar = (exito, mensaje) => {
+        eliminacionExitosa = exito;
+        if (!modalResultadoEliminar) return;
+
+        if (exito) {
+            iconoResultadoEliminar.className = "w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-1 bg-green-50 text-green-500";
+            iconoResultadoEliminar.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            tituloResultadoEliminar.innerText = "Cuenta eliminada";
+        } else {
+            iconoResultadoEliminar.className = "w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-1 bg-red-50 text-red-500";
+            iconoResultadoEliminar.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+            tituloResultadoEliminar.innerText = "No pudimos eliminar tu cuenta";
+        }
+        mensajeResultadoEliminar.innerText = mensaje;
+
+        modalResultadoEliminar.classList.remove('hidden');
+        setTimeout(() => {
+            modalResultadoEliminar.classList.remove('opacity-0');
+            if (modalResultadoEliminarContent) modalResultadoEliminarContent.classList.remove('translate-y-full');
+        }, 10);
+    };
+
+    const cerrarModalResultadoEliminar = () => {
+        if (!modalResultadoEliminar) return;
+        modalResultadoEliminar.classList.add('opacity-0');
+        if (modalResultadoEliminarContent) modalResultadoEliminarContent.classList.add('translate-y-full');
+        setTimeout(() => {
+            modalResultadoEliminar.classList.add('hidden');
+            // Si la eliminación fue exitosa, ahora sí redirigimos al login
+            if (eliminacionExitosa) {
+                window.location.href = "../login/indexLogin.html";
+            }
+        }, 300);
+    };
+
+    if (btnCerrarModalConfirmarEliminar) btnCerrarModalConfirmarEliminar.addEventListener('click', cerrarModalConfirmarEliminar);
+    if (btnCancelarModalConfirmarEliminar) btnCancelarModalConfirmarEliminar.addEventListener('click', cerrarModalConfirmarEliminar);
+    if (modalConfirmarEliminar) {
+        modalConfirmarEliminar.addEventListener('click', (e) => {
+            if (e.target === modalConfirmarEliminar) cerrarModalConfirmarEliminar();
+        });
+    }
+    if (btnCerrarModalResultadoEliminar) btnCerrarModalResultadoEliminar.addEventListener('click', cerrarModalResultadoEliminar);
+    if (modalResultadoEliminar) {
+        modalResultadoEliminar.addEventListener('click', (e) => {
+            if (e.target === modalResultadoEliminar) cerrarModalResultadoEliminar();
+        });
+    }
+
+    if (btnConfirmarEliminarCuenta) {
+        btnConfirmarEliminarCuenta.addEventListener('click', async () => {
+            const textoOriginal = btnConfirmarEliminarCuenta.innerHTML;
+            btnConfirmarEliminarCuenta.disabled = true;
+            btnConfirmarEliminarCuenta.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Eliminando...';
+
+            try {
+                const response = await axiosConfigInstance.post(`/user/block/current`);
+                cerrarModalConfirmarEliminar();
+                setTimeout(() => {
+                    mostrarResultadoEliminar(true, "Tu cuenta fue eliminada correctamente. Serás redirigido al inicio de sesión.");
+                }, 300);
+            } catch (error) {
+                console.error("Error al eliminar cuenta:", error);
+                const msg = error.response?.data?.message || "Ocurrió un error al eliminar tu cuenta. Intentá nuevamente.";
+                cerrarModalConfirmarEliminar();
+                setTimeout(() => {
+                    mostrarResultadoEliminar(false, msg);
+                }, 300);
+            } finally {
+                btnConfirmarEliminarCuenta.disabled = false;
+                btnConfirmarEliminarCuenta.innerHTML = textoOriginal;
+            }
+        });
+    }
 
     // Copiar alias al portapapeles
     const copiarAlias = async () => {
@@ -259,9 +367,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Eliminar Cuenta
     const btnEliminarCuenta = document.getElementById('btnEliminarCuenta');
     if (btnEliminarCuenta) {
-        btnEliminarCuenta.addEventListener('click', () => {
-            console.log("¡CUIDADO! Iniciar flujo de Eliminación de Cuenta.");
-        });
+        btnEliminarCuenta.addEventListener('click', abrirModalConfirmarEliminar);
     }
 
     // Botón Volver

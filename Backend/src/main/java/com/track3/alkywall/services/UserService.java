@@ -85,6 +85,12 @@ public class UserService {
     }
 
     @Transactional
+    public void toggleIsActive(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("El usuario no existe"));
+        userRepository.toggleIsActiveById(user.getId());
+    }
+
+    @Transactional
     public void delete(Long id){
         User user = userRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("El usuario no existe")

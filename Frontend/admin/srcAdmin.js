@@ -35,7 +35,7 @@ const deleteUser = async (id) => {
     if (!axiosInstance) return false;
     try {
         const response = await axiosInstance.delete("/user/" + id);
-        return response.status == 204 || response.status == 200;
+        return response.status >= 200 && response.status < 300;
     }
     catch (error) {
         console.error(error);
@@ -49,7 +49,7 @@ const toggleBlock = async (id) => {
     if (!axiosInstance) return null;
     try {
         const response = await axiosInstance.post("/user/block/" + id);
-        return response.status == 201 || response.status == 200;
+        return response.status >= 200 && response.status < 300;
     }
     catch (error) {
         console.error(error);
@@ -63,7 +63,7 @@ const editUser = async (id, userUpdateRequest) => {
     if (!axiosInstance) return null;
     try {
         const response = await axiosInstance.put("/user/" + id, userUpdateRequest);
-        return response.status == 201 || response.status == 200;
+        return response.status >= 200 && response.status < 300;
     }
     catch (error) {
         console.error(error);
@@ -265,6 +265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Ejecutar la acción
         btnConfirmarAccion.addEventListener('click', async () => {
             btnConfirmarAccion.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            let exito = false;
 
             // Petición al backend
             if (accionPendiente === 'eliminar') {
@@ -356,6 +357,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Guardar Edición
         btnGuardarEdicion.addEventListener('click', async () => {
             btnGuardarEdicion.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+            let exito = false;
 
             // Petición al backend
             const userUpdateRequest = new UserUpdateRequest(

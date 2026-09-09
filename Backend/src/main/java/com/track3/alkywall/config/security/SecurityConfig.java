@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/user/identifier/**",
                                 "/api/user/current",
+                                "/api/user/block/current",
                                 "/api/account/**",
                                 "/api/transaction/**",
                                 "/api/contacts/**",

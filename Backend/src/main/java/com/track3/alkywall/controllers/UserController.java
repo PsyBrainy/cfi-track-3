@@ -85,6 +85,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/block/current")
+    public ResponseEntity<Void> toggleBlockCurrentUser(Authentication authentication){
+        userService.toggleIsActive(authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
         userService.delete(id);
